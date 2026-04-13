@@ -773,6 +773,15 @@ async function submitAIScan(){
   }catch(e){
     showToast('❌ 请求异常: '+e.message);
     console.error('AI scan error:',e);
+    // If we already have partial result, show it instead of discarding
+    if(full.trim()){
+      analyzing.style.display='none';
+      resultBox.style.display='block';
+      ssrContent.innerHTML=full.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+      btn.disabled=false;btn.style.opacity='1';btn.innerHTML='<i class="fas fa-brain"></i> 开始 AI 分析';
+      showToast('⚠️ 分析可能不完整，请参考已有结果');
+      return;
+    }
   }
   // Only reach here on error
   resetScanUI();

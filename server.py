@@ -124,7 +124,10 @@ def scan_image():
                         break
                     try:
                         chunk_data = json.loads(chunk)
-                        delta = chunk_data.get("choices", [{}])[0].get("delta", {})
+                        choices = chunk_data.get("choices", [])
+                        if not choices:
+                            continue
+                        delta = choices[0].get("delta", {})
                         content = delta.get("content", "")
                         if content:
                             yield f"data: {json.dumps({'content': content}, ensure_ascii=False)}\n\n"
@@ -148,9 +151,11 @@ def scan_image():
         stream_with_context(generate()),
         mimetype="text/event-stream",
         headers={
-            "Cache-Control": "no-cache",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
             "X-Accel-Buffering": "no",
             "Access-Control-Allow-Origin": "*",
+            "Connection": "keep-alive",
+            "Transfer-Encoding": "chunked",
         },
     )
 
