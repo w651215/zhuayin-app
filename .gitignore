@@ -8,3 +8,5 @@ server.log
 proxy.log
 server_flask.log
 server_http.log
+server.py
+proxy.js
