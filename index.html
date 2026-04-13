@@ -674,7 +674,6 @@ function updateApiKeyUI(){const b=document.getElementById('apiKeyBanner'),bg=doc
 function openApiKeyModal(){document.getElementById('apiKeyInput').value=apiKey;document.getElementById('apiKeyStatus').textContent='';document.getElementById('apiKeyModal').classList.add('show');}
 function closeApiKeyModal(){document.getElementById('apiKeyModal').classList.remove('show');}
 function saveApiKey(){const key=document.getElementById('apiKeyInput').value.trim(),st=document.getElementById('apiKeyStatus');if(!key){st.textContent='❌ 请输入 API Key';st.style.color='var(--red)';return;}apiKey=key;localStorage.setItem('bailian_api_key',key);updateApiKeyUI();closeApiKeyModal();showToast('✅ Key已保存');}
-}
 
 // ===== AI Scan =====
 function selectScanType(type,el){currentScanType=type;document.querySelectorAll('.scan-option').forEach(o=>o.classList.remove('selected'));if(el)el.classList.add('selected');document.getElementById('scanUploadArea').style.display='block';updateScanBtn();}
