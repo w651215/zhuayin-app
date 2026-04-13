@@ -761,21 +761,26 @@ async function submitAIScan(){
 
     if(!full.trim()){showToast('❌ AI未返回有效结果');resetScanUI();return;}
 
-    // Show final result
+    // Show final result - SUCCESS
     analyzing.style.display='none';
     resultBox.style.display='block';
-    const typeNames={skin:'皮肤',eye:'眼睛',gum:'牙龈',poop:'便便'};
     ssrContent.innerHTML=full.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+    // Keep result visible, restore only the button
+    btn.disabled=false;btn.style.opacity='1';btn.innerHTML='<i class="fas fa-brain"></i> 开始 AI 分析';
+    showToast('✅ AI分析完成');
+    return; // Don't run resetScanUI - keep result on screen
 
   }catch(e){
     showToast('❌ 请求异常: '+e.message);
     console.error('AI scan error:',e);
   }
+  // Only reach here on error
   resetScanUI();
 
   function resetScanUI(){
     btn.disabled=false;btn.style.opacity='1';btn.innerHTML='<i class="fas fa-brain"></i> 开始 AI 分析';
     analyzing.style.display='none';
+    resultBox.style.display='none';
     if(aiRest)aiRest.style.display='block';
   }
 }
