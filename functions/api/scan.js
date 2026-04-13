@@ -13,23 +13,27 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-function handleOptions() {
+export function onRequestOptions() {
   return new Response(null, { status: 204, headers: CORS_HEADERS });
 }
 
-function jsonResponse(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { "Content-Type": "application/json", ...CORS_HEADERS },
-  });
-}
-
-async function handleScan(request) {
+export async function onRequestPost(context) {
   try {
-    const { api_key, image_base64, scan_type, mime_type } = await request.json();
+    const body = await context.request.json();
+    const { api_key, image_base64, scan_type, mime_type } = body;
 
-    if (!api_key) return jsonResponse({ error: "请先设置阿里云百炼 API Key" }, 400);
-    if (!image_base64) return jsonResponse({ error: "请上传宠物照片" }, 400);
+    if (!api_key) {
+      return new Response(JSON.stringify({ error: "请先设置阿里云百炼 API Key" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+      });
+    }
+    if (!image_base64) {
+      return new Response(JSON.stringify({ error: "请上传宠物照片" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+      });
+    }
 
     const prompt = PROMPT_MAP[scan_type] || PROMPT_MAP.skin;
     const image_url = `data:${mime_type || "image/jpeg"};base64,${image_base64}`;
@@ -64,23 +68,19 @@ async function handleScan(request) {
         const errBody = await resp.json();
         errMsg = errBody?.error?.message || errMsg;
       } catch (e) {}
-      // Send as SSE error so frontend can parse it
-      return new Response(`data: ${JSON.stringify({ error: errMsg })}\n\n`, {
-        headers: {
-          "Content-Type": "text/event-stream; charset=utf-8",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          ...CORS_HEADERS,
-        },
+      return new Response(JSON.stringify({ error: errMsg }), {
+        status: resp.status,
+        headers: { "Content-Type": "application/json", ...CORS_HEADERS },
       });
     }
 
-    // Stream the response through, transforming SSE format
+    // Stream: transform SSE from Bailian to our format
     const { readable, writable } = new TransformStream();
     const writer = writable.getWriter();
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
 
-    // Process the stream in background
+    // Background: read from Bailian, transform, write to client
     (async () => {
       try {
         const reader = resp.body.getReader();
@@ -92,7 +92,7 @@ async function handleScan(request) {
 
           buf += decoder.decode(value, { stream: true });
           const lines = buf.split("\n");
-          buf = lines.pop(); // keep incomplete line
+          buf = lines.pop();
 
           for (const line of lines) {
             if (!line.startsWith("data: ")) continue;
@@ -109,13 +109,11 @@ async function handleScan(request) {
                   encoder.encode(`data: ${JSON.stringify({ content })}\n\n`)
                 );
               }
-            } catch (e) {
-              // Skip unparseable chunks
-            }
+            } catch (e) {}
           }
         }
 
-        // Process remaining buffer
+        // Remaining buffer
         if (buf.trim().startsWith("data: ")) {
           const d = buf.trim().slice(6);
           if (d !== "[DONE]") {
@@ -152,58 +150,9 @@ async function handleScan(request) {
       },
     });
   } catch (e) {
-    return jsonResponse({ error: `请求异常: ${e.message}` }, 500);
-  }
-}
-
-async function handleVerifyKey(request) {
-  try {
-    const { api_key } = await request.json();
-
-    if (!api_key) return jsonResponse({ valid: false, error: "API Key不能为空" }, 400);
-
-    const resp = await fetch(`${BAILIAN_BASE_URL}/chat/completions`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${api_key}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "qwen-plus",
-        messages: [{ role: "user", content: "hi" }],
-        max_tokens: 1,
-      }),
+    return new Response(JSON.stringify({ error: `请求异常: ${e.message}` }), {
+      status: 500,
+      headers: { "Content-Type": "application/json", ...CORS_HEADERS },
     });
-
-    if (resp.ok) {
-      return jsonResponse({ valid: true });
-    } else {
-      let msg = "无效的API Key";
-      try {
-        const err = await resp.json();
-        msg = err?.error?.message || msg;
-      } catch (e) {}
-      return jsonResponse({ valid: false, error: msg });
-    }
-  } catch (e) {
-    return jsonResponse({ valid: false, error: `验证异常: ${e.message}` });
   }
-}
-
-export async function onRequestOptions() {
-  return handleOptions();
-}
-
-export async function onRequestPost(context) {
-  const url = new URL(context.request.url);
-
-  if (url.pathname === "/api/scan") {
-    return handleScan(context.request);
-  }
-
-  if (url.pathname === "/api/verify-key") {
-    return handleVerifyKey(context.request);
-  }
-
-  return jsonResponse({ error: "Not Found" }, 404);
 }
