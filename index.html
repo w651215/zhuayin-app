@@ -16,6 +16,17 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
 .page.active{opacity:1;transform:translateY(0);pointer-events:auto}
 .page::-webkit-scrollbar{display:none}
 
+/* ===== Fullscreen Overlay Pages ===== */
+.overlay-page{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:250;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay-page.show{opacity:1;pointer-events:auto}
+.overlay-inner{width:100%;max-width:430px;height:100%;margin:0 auto;display:flex;flex-direction:column;background:var(--bg);transform:translateY(30px);transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.overlay-page.show .overlay-inner{transform:translateY(0)}
+.overlay-header{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--border);background:var(--card);flex-shrink:0}
+.overlay-header .oh-back{width:34px;height:34px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:13px}
+.overlay-header .oh-title{font-size:16px;font-weight:700;flex:1}
+.overlay-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0}
+.overlay-body::-webkit-scrollbar{display:none}
+
 /* ===== Bottom Nav ===== */
 .bottom-nav{position:absolute;bottom:0;left:0;width:100%;height:calc(68px + var(--safe-bottom));padding-bottom:var(--safe-bottom);background:rgba(255,255,255,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;align-items:center;justify-content:space-around;border-top:.5px solid rgba(0,0,0,.06);z-index:100}
 .nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:6px 16px;border-radius:12px;transition:all .3s;position:relative}
@@ -26,7 +37,7 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
 .nav-item.center-btn i{color:#fff;font-size:22px}.nav-item.center-btn span{display:none}
 .nav-item .nav-dot{position:absolute;top:4px;right:10px;width:6px;height:6px;background:var(--red);border-radius:50%}
 
-/* ===== Sticky Header + Tabs ===== */
+/* ===== Sticky Header ===== */
 .sticky-top{position:sticky;top:0;z-index:50;background:rgba(248,249,254,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 .header{padding:14px 20px 10px;display:flex;align-items:center;justify-content:space-between}
 .header-title{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--primary),#FF8E8E);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -45,6 +56,12 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
 @keyframes floatUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 ::-webkit-scrollbar{width:0;height:0}
+.form-group{margin-bottom:14px}.form-group label{display:block;font-size:12px;font-weight:600;margin-bottom:5px;color:var(--text-sec)}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;outline:none;transition:border-color .3s;background:var(--bg)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary)}
+.btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .2s;box-shadow:0 4px 16px rgba(255,107,107,.3)}
+.btn-primary:active{transform:scale(.97)}
+.btn-secondary{width:100%;padding:13px;background:var(--bg);color:var(--text-sec);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:8px}
 
 /* ===== Waterfall ===== */
 .waterfall{column-count:2;column-gap:10px;padding:10px 12px 20px}
@@ -58,46 +75,27 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
 .wf-card .wf-user{display:flex;align-items:center;gap:6px}
 .wf-card .wf-user img{width:22px;height:22px;border-radius:50%;object-fit:cover}
 .wf-card .wf-uname{font-size:11px;color:var(--text-sec);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.wf-card .wf-likes{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--text-muted)}
-.wf-card .wf-likes i{font-size:12px}
+.wf-card .wf-likes{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--text-muted)}.wf-card .wf-likes i{font-size:12px}
 .wf-card .wf-likes.liked i{color:var(--red)}.wf-card .wf-likes.liked{color:var(--red)}
 .wf-card .wf-tag{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:500}
 .wf-card .wf-location{font-size:10px;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:3px}
 
 /* ===== Detail Page ===== */
-.detail-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:250;opacity:0;pointer-events:none;transition:opacity .3s}
-.detail-overlay.show{opacity:1;pointer-events:auto}
-.detail-inner{width:100%;max-width:430px;height:100%;margin:0 auto;overflow-y:auto;background:var(--bg);display:flex;flex-direction:column}
-.detail-header{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0}
-.detail-header .dh-back{width:34px;height:34px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:13px}
-.detail-header .dh-user{display:flex;align-items:center;gap:8px;flex:1}
-.detail-header .dh-user img{width:32px;height:32px;border-radius:50%;object-fit:cover}
-.detail-header .dh-name{font-size:14px;font-weight:700}
-.detail-header .dh-time{font-size:10px;color:var(--text-muted)}
-.detail-header .dh-follow{padding:5px 14px;border-radius:var(--radius-full);font-size:11px;font-weight:600;background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border:none;cursor:pointer}
-.detail-photos{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;background:#000}
-.detail-photos::-webkit-scrollbar{display:none}
+.detail-photos{width:100%;overflow-x:auto;flex-shrink:0;background:#000}.detail-photos::-webkit-scrollbar{display:none}
 .detail-photos-inner{display:flex;width:max-content}
 .detail-photos-inner img{width:100vw;max-width:430px;height:360px;object-fit:cover;flex-shrink:0}
-.detail-photo-dots{display:flex;justify-content:center;gap:5px;padding:8px 0;background:#000}
-.detail-photo-dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3)}
-.detail-photo-dots span.active{background:#fff}
 .detail-content{padding:16px 18px;flex:1}
 .detail-content .dc-title{font-size:16px;font-weight:700;line-height:1.5;margin-bottom:10px}
 .detail-content .dc-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
 .detail-content .dc-tag{padding:3px 10px;border-radius:var(--radius-full);font-size:11px;font-weight:500}
 .detail-actions{display:flex;align-items:center;gap:20px;padding:12px 18px;border-top:1px solid var(--border);background:var(--card);flex-shrink:0}
-.detail-actions .da-item{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-sec);cursor:pointer}
-.detail-actions .da-item i{font-size:18px}
-.detail-actions .da-item.liked i{color:var(--red)}
-.detail-actions .da-item.collected i{color:var(--yellow)}
+.detail-actions .da-item{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-sec);cursor:pointer}.detail-actions .da-item i{font-size:18px}
+.detail-actions .da-item.liked i{color:var(--red)}.detail-actions .da-item.collected i{color:var(--yellow)}
 .detail-comments{padding:0 18px 20px;margin-top:4px}
 .detail-comments .dc-section-title{font-size:14px;font-weight:700;margin-bottom:12px}
 .comment-item{display:flex;gap:10px;margin-bottom:14px}
 .comment-item img{width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0}
-.comment-item .ci-body{flex:1}
-.comment-item .ci-name{font-size:12px;font-weight:600;color:var(--primary)}
-.comment-item .ci-text{font-size:13px;line-height:1.5;margin-top:2px}
+.comment-item .ci-body{flex:1}.comment-item .ci-name{font-size:12px;font-weight:600;color:var(--primary)}.comment-item .ci-text{font-size:13px;line-height:1.5;margin-top:2px}
 .comment-item .ci-meta{font-size:10px;color:var(--text-muted);margin-top:3px;display:flex;gap:12px}
 .detail-comment-input{display:flex;gap:8px;align-items:center;padding:10px 16px calc(10px + var(--safe-bottom));background:var(--card);border-top:1px solid var(--border);flex-shrink:0}
 .detail-comment-input input{flex:1;padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius-full);font-size:13px;font-family:inherit;outline:none;background:var(--bg)}
@@ -109,9 +107,68 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
 .img-viewer.show{opacity:1;pointer-events:auto}
 .img-viewer img{max-width:100%;max-height:90vh;object-fit:contain}
 .img-viewer .iv-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px}
-.img-viewer .iv-counter{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.7);font-size:13px}
 
-/* ===== AI Scan - Dog Style ===== */
+/* ===== Search Page ===== */
+.search-hot{padding:16px 18px}
+.search-hot h4{font-size:14px;font-weight:700;margin-bottom:10px}
+.search-hot .sh-tags{display:flex;gap:8px;flex-wrap:wrap}
+.search-hot .sh-tag{padding:6px 14px;background:var(--bg);border-radius:var(--radius-full);font-size:12px;color:var(--text-sec);cursor:pointer;transition:background .2s}
+.search-hot .sh-tag:active{background:var(--primary-light)}
+.search-history{padding:0 18px 16px}
+.search-history h4{font-size:14px;font-weight:700;margin-bottom:10px}
+.search-history .sh-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.search-history .sh-item:last-child{border:none}
+.search-history .sh-item span{font-size:13px;color:var(--text-sec)}
+
+/* ===== Message Page ===== */
+.msg-item{display:flex;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .2s}
+.msg-item:active{background:var(--bg)}
+.msg-item img{width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.msg-item .mi-info{flex:1;min-width:0}
+.msg-item .mi-top{display:flex;justify-content:space-between;align-items:center}
+.msg-item .mi-name{font-size:14px;font-weight:600}
+.msg-item .mi-time{font-size:10px;color:var(--text-muted)}
+.msg-item .mi-text{font-size:12px;color:var(--text-sec);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msg-item .mi-dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:6px}
+
+/* ===== User Profile Page ===== */
+.up-banner{position:relative;height:140px;overflow:hidden}
+.up-banner img{width:100%;height:100%;object-fit:cover}
+.up-banner::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:60px;background:linear-gradient(transparent,rgba(0,0,0,.35))}
+.up-banner .up-back{position:absolute;top:12px;left:12px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.3);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:14px;z-index:5;transition:background .2s}
+.up-banner .up-back:active{background:rgba(0,0,0,.5)}
+.up-card{margin:-36px 16px 16px;background:var(--card);border-radius:var(--radius);padding:40px 16px 16px;box-shadow:var(--shadow-lg);position:relative;z-index:2}
+.up-card .up-avatar{position:absolute;top:-30px;left:50%;transform:translateX(-50%);width:60px;height:60px;border-radius:50%;overflow:hidden;border:3px solid var(--card);box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.up-card .up-avatar img{width:100%;height:100%;object-fit:cover}
+.up-card .up-name{text-align:center;font-size:17px;font-weight:800;margin-bottom:2px}
+.up-card .up-bio{text-align:center;font-size:11px;color:var(--text-sec);margin-bottom:12px}
+.up-card .up-stats{display:flex;border-radius:var(--radius-sm);overflow:hidden;background:var(--bg)}
+.up-card .up-stat{flex:1;text-align:center;padding:8px 0}.up-card .up-stat-val{font-size:16px;font-weight:900;color:var(--primary)}.up-card .up-stat-label{font-size:10px;color:var(--text-muted)}
+.up-actions{display:flex;gap:8px;padding:0 16px 16px}
+.up-actions button{flex:1;padding:10px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:transform .2s}
+.up-actions button:active{transform:scale(.96)}
+.up-actions .up-btn-follow{background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;box-shadow:0 2px 10px rgba(255,107,107,.3)}
+.up-actions .up-btn-msg{background:var(--bg);color:var(--text-sec);border:1.5px solid var(--border)!important}
+.up-section{padding:0 16px 16px}
+.up-section h4{font-size:14px;font-weight:700;margin-bottom:10px}
+.up-pets{display:flex;gap:8px;overflow-x:auto}.up-pets::-webkit-scrollbar{display:none}
+.up-pet{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--primary-light);border-radius:var(--radius-full)}
+.up-pet .up-pet-icon{font-size:14px}.up-pet .up-pet-name{font-size:11px;font-weight:600;color:var(--primary)}.up-pet .up-pet-breed{font-size:9px;color:var(--text-muted)}
+
+/* ===== Chat / Private Message ===== */
+.chat-messages{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+.chat-messages::-webkit-scrollbar{display:none}
+.msg-row{max-width:80%;display:flex;gap:7px}.msg-row.ai{align-self:flex-start}.msg-row.user{align-self:flex-end;flex-direction:row-reverse}
+.msg-row .mr-avatar{width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0}.msg-row .mr-avatar img{width:100%;height:100%;object-fit:cover}
+.msg-row .mr-bubble{padding:9px 12px;border-radius:14px;font-size:13px;line-height:1.5}
+.msg-row.ai .mr-bubble{background:var(--card);box-shadow:var(--shadow);border-top-left-radius:3px}
+.msg-row.user .mr-bubble{background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border-top-right-radius:3px}
+.chat-input-bar{display:flex;gap:8px;align-items:center;padding:10px 16px calc(10px + var(--safe-bottom));background:var(--card);border-top:1px solid var(--border);flex-shrink:0}
+.chat-input-bar input{flex:1;padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius-full);font-size:13px;font-family:inherit;outline:none;background:var(--bg)}
+.chat-input-bar input:focus{border-color:var(--primary)}
+.chat-input-bar .ci-send{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;flex-shrink:0}
+
+/* ===== AI Scan ===== */
 .scan-hero{text-align:center;padding:24px 20px 16px}
 .scan-dog-wrap{position:relative;width:160px;height:160px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
 .scan-dog-body{font-size:80px;position:relative;z-index:1;filter:drop-shadow(0 4px 12px rgba(0,0,0,.1))}
@@ -125,43 +182,33 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
 .scan-dog-wrap .scan-sparkles:nth-child(6){bottom:30px;right:25px;animation-delay:.9s}
 @keyframes sparkle{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
 .scan-hero h2{font-size:18px;font-weight:700;margin-bottom:4px}.scan-hero p{font-size:12px;color:var(--text-sec)}
-
 .scan-options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 20px;margin-bottom:16px}
 .scan-option{background:var(--card);border-radius:var(--radius);padding:16px 12px;text-align:center;box-shadow:var(--shadow);cursor:pointer;transition:all .3s;border:2px solid transparent}
 .scan-option:active{transform:scale(.96)}.scan-option .so-icon{width:44px;height:44px;border-radius:14px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:22px}
 .scan-option .so-title{font-size:13px;font-weight:700;margin-bottom:2px}.scan-option .so-desc{font-size:10px;color:var(--text-muted)}
 .scan-option.selected{border-color:var(--primary);background:var(--primary-light)}
-
-.api-key-banner{margin:0 20px 12px;padding:10px 14px;border-radius:var(--radius-sm);display:flex;align-items:center;gap:10px;cursor:pointer;transition:transform .2s}
-.api-key-banner:active{transform:scale(.98)}
+.api-key-banner{margin:0 20px 12px;padding:10px 14px;border-radius:var(--radius-sm);display:flex;align-items:center;gap:10px;cursor:pointer}.api-key-banner:active{transform:scale(.98)}
 .api-key-banner.connected{background:var(--green-light);border:1px solid rgba(0,184,148,.15)}
 .api-key-banner.disconnected{background:var(--yellow-light);border:1px solid rgba(253,203,110,.2)}
 .api-key-banner .akb-icon{font-size:16px}.api-key-banner .akb-info{flex:1}.api-key-banner .akb-title{font-size:12px;font-weight:700}.api-key-banner .akb-desc{font-size:10px;color:var(--text-sec);margin-top:1px}
 .api-key-banner.connected .akb-title{color:var(--green)}.api-key-banner.disconnected .akb-title{color:var(--orange)}
-
-.scan-upload-area{margin:0 20px 16px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:none}
-.scan-upload-preview{width:100%;min-height:160px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden}
+.scan-upload-area{margin:0 20px 16px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.scan-upload-preview{width:100%;min-height:160px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}
 .scan-upload-preview img{width:100%;height:180px;object-fit:cover;display:block}
 .scan-upload-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:30px 20px;color:var(--text-muted)}
 .scan-upload-placeholder i{font-size:40px;color:var(--primary-light)}.scan-upload-placeholder span{font-size:13px;font-weight:500}.scan-upload-placeholder .sub{font-size:11px}
 .scan-upload-actions{padding:10px 12px;display:flex;gap:8px}
-.scan-upload-actions button{flex:1;padding:10px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:transform .2s}
-.scan-upload-actions button:active{transform:scale(.97)}
+.scan-upload-actions button{flex:1;padding:10px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}.scan-upload-actions button:active{transform:scale(.97)}
 .scan-upload-actions .btn-camera{background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff}
 .scan-upload-actions .btn-album{background:var(--bg);color:var(--text-sec);border:1.5px solid var(--border)!important}
-.scan-submit-wrap{padding:0 20px;display:none}
-.scan-analyzing{text-align:center;padding:24px 20px;display:none}
+.scan-analyzing{text-align:center;padding:24px 20px}
 .scan-analyzing .sa-spinner{width:48px;height:48px;border:3.5px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
 .scan-analyzing .sa-text{font-size:14px;font-weight:600}.scan-analyzing .sa-sub{font-size:11px;color:var(--text-muted);margin-top:3px}
 .scan-stream-preview{margin-top:14px;text-align:left;background:var(--card);border-radius:var(--radius);padding:14px;font-size:12px;line-height:1.8;color:var(--text-sec);max-height:280px;overflow-y:auto;white-space:pre-wrap;box-shadow:var(--shadow)}
-.scan-stream-result{padding:0 20px 20px;display:none}
-.ssr-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.ssr-header .ssr-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
-.ssr-body{background:var(--card);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);font-size:12px;line-height:1.8;color:var(--text-sec);white-space:pre-wrap;word-break:break-word}
-.ssr-body strong{color:var(--text)}
-.ssr-actions{display:flex;gap:8px;margin-top:12px}
-.ssr-actions button{flex:1;padding:11px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform .2s}
-.ssr-actions button:active{transform:scale(.97)}
+.scan-stream-result{padding:0 20px 20px}
+.ssr-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}.ssr-header .ssr-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.ssr-body{background:var(--card);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);font-size:12px;line-height:1.8;color:var(--text-sec);white-space:pre-wrap;word-break:break-word}.ssr-body strong{color:var(--text)}
+.ssr-actions{display:flex;gap:8px;margin-top:12px}.ssr-actions button{flex:1;padding:11px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer}.ssr-actions button:active{transform:scale(.97)}
 .ai-consult-card{background:linear-gradient(135deg,#667eea,#764ba2);border-radius:var(--radius);padding:16px;margin:0 20px 12px;color:#fff;display:flex;align-items:center;gap:14px;cursor:pointer;box-shadow:0 4px 20px rgba(102,126,234,.25)}
 .ai-consult-card .acc-icon{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:20px}
 .ai-consult-card .acc-info{flex:1}.ai-consult-card .acc-title{font-size:14px;font-weight:700}.ai-consult-card .acc-desc{font-size:11px;opacity:.8;margin-top:1px}
@@ -214,7 +261,7 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
 .match-card .mc-info{flex:1}.match-card .mc-title{font-size:13px;font-weight:700}.match-card .mc-desc{font-size:11px;color:var(--text-sec);margin-top:2px}
 .match-card .mc-badge{padding:3px 10px;border-radius:var(--radius-full);font-size:10px;font-weight:700;background:var(--primary);color:#fff}
 
-/* ===== Profile Page - Redesigned ===== */
+/* ===== Profile Page ===== */
 .profile-banner{position:relative;margin:0 20px 0;border-radius:0 0 var(--radius) var(--radius);overflow:hidden;height:160px}
 .profile-banner img{width:100%;height:100%;object-fit:cover}
 .profile-banner::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:80px;background:linear-gradient(transparent,rgba(0,0,0,.4))}
@@ -229,8 +276,7 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
 .profile-card-main .pcm-pets-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
 .profile-card-main .pcm-pet-chip{display:flex;align-items:center;gap:4px;padding:4px 10px;background:var(--primary-light);border-radius:var(--radius-full);font-size:10px;font-weight:600;color:var(--primary)}
 .profile-card-main .pcm-stats{display:flex;border-radius:var(--radius-sm);overflow:hidden;background:var(--bg)}
-.profile-card-main .pcm-stat{flex:1;text-align:center;padding:10px 0;border-right:1px solid var(--border)}
-.profile-card-main .pcm-stat:last-child{border:none}
+.profile-card-main .pcm-stat{flex:1;text-align:center;padding:10px 0;border-right:1px solid var(--border)}.profile-card-main .pcm-stat:last-child{border:none}
 .profile-card-main .pcm-stat-val{font-size:20px;font-weight:900;color:var(--primary)}.profile-card-main .pcm-stat-label{font-size:10px;color:var(--text-muted);margin-top:1px}
 .profile-quick-row{display:flex;gap:10px;margin:0 20px 14px}
 .profile-quick-item{flex:1;background:var(--card);border-radius:var(--radius-sm);padding:12px;text-align:center;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s}
@@ -247,45 +293,22 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
 .menu-item .mi-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px}
 .menu-item .mi-label{flex:1;font-size:13px;font-weight:500}.menu-item .mi-arrow{color:var(--text-muted);font-size:11px}.menu-item .mi-badge{margin-left:auto;margin-right:6px}
 
+/* ===== Generic Sub-page List ===== */
+.sub-list-item{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .2s}
+.sub-list-item:active{background:var(--bg)}
+.sub-list-item .sli-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.sub-list-item .sli-info{flex:1}.sub-list-item .sli-title{font-size:14px;font-weight:600}.sub-list-item .sli-desc{font-size:11px;color:var(--text-muted);margin-top:1px}
+.sub-list-item .sli-arrow{color:var(--text-muted);font-size:12px}
+
 /* ===== Modals ===== */
 .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
 .modal-overlay.show{opacity:1;pointer-events:auto}
 .modal-content{width:100%;max-width:430px;background:var(--card);border-radius:24px 24px 0 0;padding:22px 20px calc(22px + var(--safe-bottom));transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);max-height:85vh;overflow-y:auto}
 .modal-overlay.show .modal-content{transform:translateY(0)}
 .modal-handle{width:40px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 14px}
-.form-group{margin-bottom:14px}.form-group label{display:block;font-size:12px;font-weight:600;margin-bottom:5px;color:var(--text-sec)}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;outline:none;transition:border-color .3s;background:var(--bg)}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary)}
-.btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .2s;box-shadow:0 4px 16px rgba(255,107,107,.3)}
-.btn-primary:active{transform:scale(.97)}
-.btn-secondary{width:100%;padding:13px;background:var(--bg);color:var(--text-sec);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:8px}
 .record-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
 .record-modal.show{opacity:1;pointer-events:auto}
 .record-form{width:100%;max-width:430px;background:var(--card);border-radius:24px 24px 0 0;padding:22px 20px calc(22px + var(--safe-bottom));transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);max-height:80vh;overflow-y:auto}
-
-/* AI Chat */
-.ai-chat{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:300;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .3s}
-.ai-chat.show{opacity:1;pointer-events:auto}.ai-chat.show .chat-inner{transform:translateX(0)}
-.chat-inner{width:100%;max-width:430px;height:100%;margin:0 auto;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .4s cubic-bezier(.4,0,.2,1)}
-.chat-header{padding:14px 18px;display:flex;align-items:center;gap:10px;background:var(--card);border-bottom:1px solid var(--border)}
-.chat-header .back-btn{width:34px;height:34px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:13px}
-.chat-header .ch-info{flex:1}.chat-header .ch-name{font-size:14px;font-weight:700}.chat-header .ch-status{font-size:10px;color:var(--green)}
-.chat-messages{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:10px}
-.msg{max-width:80%;display:flex;gap:7px}.msg.ai{align-self:flex-start}.msg.user{align-self:flex-end;flex-direction:row-reverse}
-.msg .msg-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.msg.ai .msg-avatar{background:var(--primary-light)}.msg.user .msg-avatar{background:var(--blue-light)}
-.msg .msg-bubble{padding:9px 12px;border-radius:14px;font-size:13px;line-height:1.5}
-.msg.ai .msg-bubble{background:var(--card);box-shadow:var(--shadow);border-top-left-radius:3px}
-.msg.user .msg-bubble{background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border-top-right-radius:3px}
-.chat-input{padding:10px 18px calc(10px + var(--safe-bottom));background:var(--card);border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
-.chat-input input{flex:1;padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius-full);font-size:13px;font-family:inherit;outline:none;background:var(--bg)}
-.chat-input input:focus{border-color:var(--primary)}
-.chat-input .send-btn{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;flex-shrink:0}
-.typing-dots{display:flex;gap:3px;padding:3px 0}.typing-dots span{width:5px;height:5px;border-radius:50%;background:var(--text-muted);animation:typing 1.4s infinite}
-.typing-dots span:nth-child(2){animation-delay:.2s}.typing-dots span:nth-child(3){animation-delay:.4s}
-@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
-
-/* Publish Modal */
 .publish-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:300;opacity:0;pointer-events:none;transition:opacity .3s}
 .publish-modal.show{opacity:1;pointer-events:auto}
 .publish-inner{width:100%;max-width:430px;height:100%;margin:0 auto;display:flex;flex-direction:column;transform:translateY(30px);transition:transform .4s cubic-bezier(.4,0,.2,1)}
@@ -296,8 +319,7 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
 .publish-header .ph-post{padding:6px 18px;background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border:none;border-radius:var(--radius-full);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
 .publish-header .ph-post:disabled{opacity:.4;cursor:default}
 .publish-photos{padding:14px 18px;display:flex;gap:8px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--border)}.publish-photos::-webkit-scrollbar{display:none}
-.pub-photo{width:90px;height:90px;border-radius:var(--radius-sm);overflow:hidden;position:relative;flex-shrink:0}
-.pub-photo img{width:100%;height:100%;object-fit:cover}
+.pub-photo{width:90px;height:90px;border-radius:var(--radius-sm);overflow:hidden;position:relative;flex-shrink:0}.pub-photo img{width:100%;height:100%;object-fit:cover}
 .pub-photo .pub-del{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer}
 .pub-add-photo{width:90px;height:90px;border-radius:var(--radius-sm);border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text-muted);cursor:pointer;flex-shrink:0}
 .pub-add-photo i{font-size:22px}.pub-add-photo span{font-size:10px}
@@ -306,6 +328,18 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
 .publish-tags{padding:10px 18px;background:var(--card);border-top:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap}
 .publish-tags .ptag{padding:4px 12px;border-radius:var(--radius-full);font-size:11px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);color:var(--text-sec);transition:all .2s}
 .publish-tags .ptag.selected{background:var(--primary-light);border-color:var(--primary);color:var(--primary);font-weight:600}
+
+/* AI Chat (reuse overlay-page) */
+.ai-chat .chat-messages{padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:80%;display:flex;gap:7px}.msg.ai{align-self:flex-start}.msg.user{align-self:flex-end;flex-direction:row-reverse}
+.msg .msg-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.msg.ai .msg-avatar{background:var(--primary-light)}.msg.user .msg-avatar{background:var(--blue-light)}
+.msg .msg-bubble{padding:9px 12px;border-radius:14px;font-size:13px;line-height:1.5}
+.msg.ai .msg-bubble{background:var(--card);box-shadow:var(--shadow);border-top-left-radius:3px}
+.msg.user .msg-bubble{background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border-top-right-radius:3px}
+.typing-dots{display:flex;gap:3px;padding:3px 0}.typing-dots span{width:5px;height:5px;border-radius:50%;background:var(--text-muted);animation:typing 1.4s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
 </style>
 </head>
 <body>
@@ -317,47 +351,30 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
   <div class="sticky-top">
     <div class="header">
       <div class="header-title">🐾 爪印宠友圈</div>
-      <div style="display:flex;gap:6px"><div class="header-icon" onclick="showToast('🔍 搜索')"><i class="fas fa-search"></i></div><div class="header-icon" onclick="showToast('🔔 消息')"><i class="fas fa-bell"></i></div></div>
+      <div style="display:flex;gap:6px"><div class="header-icon" onclick="openSearchPage()"><i class="fas fa-search"></i></div><div class="header-icon" onclick="openMessagePage()"><i class="fas fa-bell"></i></div></div>
     </div>
-    <div class="community-tabs" id="communityTabs">
-      <div class="community-tab active" onclick="switchCommunityTab(this)">推荐</div>
-      <div class="community-tab" onclick="switchCommunityTab(this)">关注</div>
-      <div class="community-tab" onclick="switchCommunityTab(this)">猫猫</div>
-      <div class="community-tab" onclick="switchCommunityTab(this)">狗狗</div>
-      <div class="community-tab" onclick="switchCommunityTab(this)">萌宠</div>
-      <div class="community-tab" onclick="switchCommunityTab(this)">养护</div>
-    </div>
+    <div class="community-tabs"><div class="community-tab active" onclick="switchCommunityTab(this)">推荐</div><div class="community-tab" onclick="switchCommunityTab(this)">关注</div><div class="community-tab" onclick="switchCommunityTab(this)">猫猫</div><div class="community-tab" onclick="switchCommunityTab(this)">狗狗</div><div class="community-tab" onclick="switchCommunityTab(this)">萌宠</div><div class="community-tab" onclick="switchCommunityTab(this)">养护</div></div>
   </div>
   <div class="waterfall" id="waterfallContainer"></div>
 </div>
 
 <!-- ===== PAGE: 宠友 ===== -->
 <div class="page" id="page-social">
-  <div class="sticky-top"><div class="header"><div style="font-size:20px;font-weight:900">🐾 宠友</div><div style="display:flex;gap:6px"><div class="header-icon" onclick="showToast('🔍 搜索')"><i class="fas fa-search"></i></div><div class="header-icon" onclick="showToast('💌 好友申请')"><i class="fas fa-user-plus"></i></div></div></div></div>
+  <div class="sticky-top"><div class="header"><div style="font-size:20px;font-weight:900">🐾 宠友</div><div style="display:flex;gap:6px"><div class="header-icon" onclick="openSearchPage()"><i class="fas fa-search"></i></div><div class="header-icon" onclick="openMessagePage()"><i class="fas fa-comment-dots"></i></div></div></div></div>
   <div class="social-profile-card">
-    <div class="sp-top">
-      <div class="sp-avatar"><img src="https://images.unsplash.com/photo-1494790108755-2616b612b830?w=120&h=120&fit=crop&crop=face" alt=""></div>
-      <div class="sp-info"><div class="sp-name">橘子的铲屎官</div><div class="sp-bio">🧑‍💻 互联网打工人 · 2猫1狗 · 坐标朝阳</div></div>
-      <div class="sp-edit" onclick="showToast('✏️ 编辑资料')">编辑</div>
-    </div>
-    <div class="sp-pets">
-      <div class="sp-pet"><div class="sp-pet-avatar">🐱</div><div><div class="sp-pet-info">团子</div><div class="sp-pet-breed">英短蓝猫·2岁</div></div></div>
-      <div class="sp-pet"><div class="sp-pet-avatar">🐶</div><div><div class="sp-pet-info">旺财</div><div class="sp-pet-breed">柯基·3岁</div></div></div>
-      <div class="sp-pet"><div class="sp-pet-avatar">🐱</div><div><div class="sp-pet-info">小橘</div><div class="sp-pet-breed">橘猫·1岁</div></div></div>
-    </div>
+    <div class="sp-top"><div class="sp-avatar" onclick="openUserProfile(0)"><img src="https://images.unsplash.com/photo-1494790108755-2616b612b830?w=120&h=120&fit=crop&crop=face" alt="" onerror="this.onerror=null;this.src='https://i.pravatar.cc/120?img=1'"></div><div class="sp-info"><div class="sp-name">橘子的铲屎官</div><div class="sp-bio">🧑‍💻 互联网打工人 · 2猫1狗 · 坐标朝阳</div></div><div class="sp-edit" onclick="showToast('✏️ 编辑资料')">编辑</div></div>
+    <div class="sp-pets"><div class="sp-pet"><div class="sp-pet-avatar">🐱</div><div><div class="sp-pet-info">团子</div><div class="sp-pet-breed">英短·2岁</div></div></div><div class="sp-pet"><div class="sp-pet-avatar">🐶</div><div><div class="sp-pet-info">旺财</div><div class="sp-pet-breed">柯基·3岁</div></div></div><div class="sp-pet"><div class="sp-pet-avatar">🐱</div><div><div class="sp-pet-info">小橘</div><div class="sp-pet-breed">橘猫·1岁</div></div></div></div>
     <div class="sp-stats"><div class="sp-stat"><div class="sp-stat-val">128</div><div class="sp-stat-label">宠友</div></div><div class="sp-stat"><div class="sp-stat-val">56</div><div class="sp-stat-label">关注</div></div><div class="sp-stat"><div class="sp-stat-val">892</div><div class="sp-stat-label">获赞</div></div></div>
   </div>
-  <div class="social-section">
-    <div class="ss-title">💑 今日缘分 <span class="more">更多 ›</span></div>
+  <div class="social-section"><div class="ss-title">💑 今日缘分 <span class="more">更多 ›</span></div>
     <div class="match-card" onclick="showToast('💕 查看匹配详情')"><div class="mc-avatars"><div class="mc-av"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face" alt=""></div><div class="mc-heart"><i class="fas fa-heart"></i></div><div class="mc-av"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&h=80&fit=crop&crop=face" alt=""></div></div><div class="mc-info"><div class="mc-title">团子 & 奶茶</div><div class="mc-desc">品种相同 · 同龄 · 都爱晒太阳</div></div><div class="mc-badge">92%</div></div>
-    <div class="match-card" onclick="showToast('💕 查看匹配详情')"><div class="mc-avatars"><div class="mc-av"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=80&h=80&fit=crop&crop=face" alt=""></div><div class="mc-heart"><i class="fas fa-heart"></i></div><div class="mc-av"><img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=80&h=80&fit=crop&crop=face" alt=""></div></div><div class="mc-info"><div class="mc-title">旺财 & 大福</div><div class="mc-desc">同品种 · 相邻小区 · 疫苗齐全</div></div><div class="mc-badge">87%</div></div>
+    <div class="match-card" onclick="showToast('💕 查看匹配详情')"><div class="mc-avatars"><div class="mc-av"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=80&h=80&fit=crop&crop=face" alt=""></div><div class="mc-heart"><i class="fas fa-heart"></i></div><div class="mc-av"><img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=80&h=80&fit=crop&crop=face" alt=""></div></div><div class="mc-info"><div class="mc-title">旺财 & 大福</div><div class="mc-desc">同品种 · 相邻小区</div></div><div class="mc-badge">87%</div></div>
   </div>
-  <div class="social-section">
-    <div class="ss-title">📍 附近宠友 <span class="more">筛选 ›</span></div>
-    <div class="friend-card"><div class="fc-left"><div class="fc-avatar"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face" alt=""><div class="fc-online"></div></div><div class="fc-name">猫猫妈</div></div><div class="fc-body"><div class="fc-top"><span class="fc-pet-tag" style="background:var(--primary-light);color:var(--primary)">🐱 英短</span><span class="fc-pet-tag" style="background:var(--blue-light);color:#0984E3">♀ 已绝育</span><span class="fc-dist">0.8km</span></div><div class="fc-desc">家有蓝猫一只，想找同小区的猫友一起遛猫晒太阳～</div><div class="fc-tags"><span class="fc-tag" style="background:var(--green-light);color:var(--green)">疫苗齐全</span><span class="fc-tag" style="background:var(--yellow-light);color:var(--orange)">找玩伴</span></div><div class="fc-action"><button class="fc-btn fc-btn-primary" onclick="event.stopPropagation();showToast('👋 已发送好友申请')">加宠友</button><button class="fc-btn fc-btn-secondary" onclick="event.stopPropagation();showToast('💬 发起聊天')">打招呼</button></div></div></div>
-    <div class="friend-card"><div class="fc-left"><div class="fc-avatar"><img src="https://images.unsplash.com/photo-1514315384763-ba401779410f?w=100&h=100&fit=crop&crop=face" alt=""><div class="fc-online"></div></div><div class="fc-name">柯基控</div></div><div class="fc-body"><div class="fc-top"><span class="fc-pet-tag" style="background:var(--secondary-light);color:var(--secondary)">🐶 柯基</span><span class="fc-pet-tag" style="background:var(--orange-light);color:var(--orange)">♂ 未绝育</span><span class="fc-dist">1.2km</span></div><div class="fc-desc">旺财3岁了，想给旺财找个小伙伴周末一起玩耍！</div><div class="fc-tags"><span class="fc-tag" style="background:var(--green-light);color:var(--green)">驱虫到期</span><span class="fc-tag" style="background:var(--red-light);color:var(--red)">找配对</span></div><div class="fc-action"><button class="fc-btn fc-btn-primary" onclick="event.stopPropagation();showToast('👋 已发送好友申请')">加宠友</button><button class="fc-btn fc-btn-secondary" onclick="event.stopPropagation();showToast('💬 发起聊天')">打招呼</button></div></div></div>
-    <div class="friend-card"><div class="fc-left"><div class="fc-avatar"><img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=100&h=100&fit=crop&crop=face" alt=""></div><div class="fc-name">橘座家</div></div><div class="fc-body"><div class="fc-top"><span class="fc-pet-tag" style="background:var(--yellow-light);color:var(--orange)">🐱 橘猫</span><span class="fc-pet-tag" style="background:var(--blue-light);color:#0984E3">♂ 已绝育</span><span class="fc-dist">2.1km</span></div><div class="fc-desc">十橘九胖，我家那只也不例外😂 有没有同款橘猫家长交流减肥心得</div><div class="fc-tags"><span class="fc-tag" style="background:var(--green-light);color:var(--green)">疫苗齐全</span><span class="fc-tag" style="background:var(--yellow-light);color:var(--orange)">减肥打卡</span></div><div class="fc-action"><button class="fc-btn fc-btn-primary" onclick="event.stopPropagation();showToast('👋 已发送好友申请')">加宠友</button><button class="fc-btn fc-btn-secondary" onclick="event.stopPropagation();showToast('💬 发起聊天')">打招呼</button></div></div></div>
-    <div class="friend-card"><div class="fc-left"><div class="fc-avatar"><img src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=100&h=100&fit=crop&crop=face" alt=""><div class="fc-online"></div></div><div class="fc-name">萨摩家长</div></div><div class="fc-body"><div class="fc-top"><span class="fc-pet-tag" style="background:var(--blue-light);color:#0984E3">🐶 萨摩耶</span><span class="fc-pet-tag" style="background:var(--primary-light);color:var(--primary)">♀ 已绝育</span><span class="fc-dist">3.5km</span></div><div class="fc-desc">微笑天使来啦！想认识更多大狗家庭，周末奥森约遛狗～</div><div class="fc-tags"><span class="fc-tag" style="background:var(--green-light);color:var(--green)">疫苗齐全</span><span class="fc-tag" style="background:var(--purple-light);color:#6C5CE7">大型犬社交</span></div><div class="fc-action"><button class="fc-btn fc-btn-primary" onclick="event.stopPropagation();showToast('👋 已发送好友申请')">加宠友</button><button class="fc-btn fc-btn-secondary" onclick="event.stopPropagation();showToast('💬 发起聊天')">打招呼</button></div></div></div>
+  <div class="social-section"><div class="ss-title">📍 附近宠友 <span class="more">筛选 ›</span></div>
+    <div class="friend-card" onclick="openUserProfile(1)"><div class="fc-left"><div class="fc-avatar"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face" alt=""><div class="fc-online"></div></div><div class="fc-name">猫猫妈</div></div><div class="fc-body"><div class="fc-top"><span class="fc-pet-tag" style="background:var(--primary-light);color:var(--primary)">🐱 英短</span><span class="fc-dist">0.8km</span></div><div class="fc-desc">家有蓝猫一只，想找同小区的猫友一起遛猫晒太阳～</div><div class="fc-tags"><span class="fc-tag" style="background:var(--green-light);color:var(--green)">疫苗齐全</span><span class="fc-tag" style="background:var(--yellow-light);color:var(--orange)">找玩伴</span></div><div class="fc-action"><button class="fc-btn fc-btn-primary" onclick="event.stopPropagation();showToast('👋 已发送好友申请')">加宠友</button><button class="fc-btn fc-btn-secondary" onclick="event.stopPropagation();openPrivateChat(1,'猫猫妈')">打招呼</button></div></div></div>
+    <div class="friend-card" onclick="openUserProfile(5)"><div class="fc-left"><div class="fc-avatar"><img src="https://images.unsplash.com/photo-1514315384763-ba401779410f?w=100&h=100&fit=crop&crop=face" alt=""><div class="fc-online"></div></div><div class="fc-name">柯基控</div></div><div class="fc-body"><div class="fc-top"><span class="fc-pet-tag" style="background:var(--secondary-light);color:var(--secondary)">🐶 柯基</span><span class="fc-dist">1.2km</span></div><div class="fc-desc">旺财3岁了，想给旺财找个小伙伴周末一起玩耍！</div><div class="fc-tags"><span class="fc-tag" style="background:var(--red-light);color:var(--red)">找配对</span></div><div class="fc-action"><button class="fc-btn fc-btn-primary" onclick="event.stopPropagation();showToast('👋 已发送好友申请')">加宠友</button><button class="fc-btn fc-btn-secondary" onclick="event.stopPropagation();openPrivateChat(5,'柯基控')">打招呼</button></div></div></div>
+    <div class="friend-card" onclick="openUserProfile(6)"><div class="fc-left"><div class="fc-avatar"><img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=100&h=100&fit=crop&crop=face" alt=""></div><div class="fc-name">橘座家</div></div><div class="fc-body"><div class="fc-top"><span class="fc-pet-tag" style="background:var(--yellow-light);color:var(--orange)">🐱 橘猫</span><span class="fc-dist">2.1km</span></div><div class="fc-desc">十橘九胖，我家那只也不例外😂</div><div class="fc-tags"><span class="fc-tag" style="background:var(--yellow-light);color:var(--orange)">减肥打卡</span></div><div class="fc-action"><button class="fc-btn fc-btn-primary" onclick="event.stopPropagation();showToast('👋 已发送好友申请')">加宠友</button><button class="fc-btn fc-btn-secondary" onclick="event.stopPropagation();openPrivateChat(6,'橘座家')">打招呼</button></div></div></div>
+    <div class="friend-card" onclick="openUserProfile(9)"><div class="fc-left"><div class="fc-avatar"><img src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=100&h=100&fit=crop&crop=face" alt=""><div class="fc-online"></div></div><div class="fc-name">萨摩家长</div></div><div class="fc-body"><div class="fc-top"><span class="fc-pet-tag" style="background:var(--blue-light);color:#0984E3">🐶 萨摩耶</span><span class="fc-dist">3.5km</span></div><div class="fc-desc">微笑天使来啦！想认识更多大狗家庭</div><div class="fc-tags"><span class="fc-tag" style="background:var(--purple-light);color:#6C5CE7">大型犬社交</span></div><div class="fc-action"><button class="fc-btn fc-btn-primary" onclick="event.stopPropagation();showToast('👋 已发送好友申请')">加宠友</button><button class="fc-btn fc-btn-secondary" onclick="event.stopPropagation();openPrivateChat(9,'萨摩家长')">打招呼</button></div></div></div>
   </div>
   <div style="height:20px"></div>
 </div>
@@ -365,38 +382,27 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
 <!-- ===== PAGE: AI 宠医 ===== -->
 <div class="page" id="page-ai">
   <div class="sticky-top"><div class="header"><div style="font-size:20px;font-weight:900">AI 宠医</div><div class="header-icon" onclick="openApiKeyModal()"><i class="fas fa-key"></i></div></div></div>
-  <div id="apiKeyBanner" class="api-key-banner disconnected" onclick="openApiKeyModal()"><span class="akb-icon">🔑</span><div class="akb-info"><div class="akb-title">未连接百炼大模型</div><div class="akb-desc">点击输入 API Key 启用真实AI识别</div></div></div>
-  <div class="scan-hero">
-    <div class="scan-dog-wrap">
-      <div class="scan-ring-anim"></div>
-      <div class="scan-dog-body">🐕</div>
-      <div class="scan-beam"></div>
-      <span class="scan-sparkles">✨</span><span class="scan-sparkles">✨</span><span class="scan-sparkles">✨</span>
-    </div>
-    <h2>AI 视觉扫描</h2>
-    <p>拍摄宠物照片，AI智能分析健康状况</p>
-  </div>
+  <div id="apiKeyBanner" class="api-key-banner disconnected" onclick="openApiKeyModal()"><span class="akb-icon">🔑</span><div class="akb-info"><div class="akb-title">未连接百炼大模型</div><div class="akb-desc">点击输入 API Key</div></div></div>
+  <div class="scan-hero"><div class="scan-dog-wrap"><div class="scan-ring-anim"></div><div class="scan-dog-body">🐕</div><div class="scan-beam"></div><span class="scan-sparkles">✨</span><span class="scan-sparkles">✨</span><span class="scan-sparkles">✨</span></div><h2>AI 视觉扫描</h2><p>拍摄宠物照片，AI智能分析健康状况</p></div>
   <div class="scan-options">
-    <div class="scan-option" onclick="selectScanType('skin',this)"><div class="so-icon" style="background:#FFE0E0">🐾</div><div class="so-title">皮肤扫描</div><div class="so-desc">猫癣·皮炎·脱毛</div></div>
+    <div class="scan-option selected" onclick="selectScanType('skin',this)"><div class="so-icon" style="background:#FFE0E0">🐾</div><div class="so-title">皮肤扫描</div><div class="so-desc">猫癣·皮炎·脱毛</div></div>
     <div class="scan-option" onclick="selectScanType('eye',this)"><div class="so-icon" style="background:#EBF5FF">👁️</div><div class="so-title">眼睛扫描</div><div class="so-desc">泪痕·红肿·白内障</div></div>
     <div class="scan-option" onclick="selectScanType('gum',this)"><div class="so-icon" style="background:#FFE0E0">🦷</div><div class="so-title">牙龈扫描</div><div class="so-desc">贫血·口炎·牙结石</div></div>
     <div class="scan-option" onclick="selectScanType('poop',this)"><div class="so-icon" style="background:#E0F7F5">💩</div><div class="so-title">便便扫描</div><div class="so-desc">消化·寄生虫·血便</div></div>
   </div>
   <div class="scan-upload-area" id="scanUploadArea"><div class="scan-upload-preview" id="scanPreview" onclick="triggerScanUpload()"><div class="scan-upload-placeholder" id="scanPlaceholder"><i class="fas fa-cloud-upload-alt"></i><span>点击上传宠物照片</span><div class="sub">支持拍照或从相册选择</div></div></div><div class="scan-upload-actions"><button class="btn-camera" onclick="triggerScanCamera()"><i class="fas fa-camera"></i> 拍照</button><button class="btn-album" onclick="triggerScanUpload()"><i class="fas fa-images"></i> 相册</button></div></div>
-  <div class="scan-submit-wrap" id="scanSubmitWrap"><button class="btn-primary" id="scanSubmitBtn" onclick="submitAIScan()" disabled style="opacity:.5"><i class="fas fa-brain"></i> 开始 AI 分析</button></div>
-  <div id="scanAnalyzing" class="scan-analyzing"><div class="sa-spinner"></div><div class="sa-text">🧠 AI 正在分析中...</div><div class="sa-sub">阿里云百炼大模型正在识别</div><div id="scanStreamPreview" class="scan-stream-preview"></div></div>
-  <div id="scanStreamResult" class="scan-stream-result"><div class="ssr-header"><div class="ssr-icon" style="background:var(--primary-light)">🔬</div><div><div style="font-size:15px;font-weight:700">AI 分析完成</div><div style="font-size:10px;color:var(--text-muted)">由阿里云百炼大模型提供</div></div></div><div class="ssr-body" id="ssrContent"></div><div class="ssr-actions"><button style="background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;box-shadow:0 4px 12px rgba(255,107,107,.3)" onclick="openAIChat()"><i class="fas fa-comment-medical"></i> 在线问诊</button><button style="background:var(--bg);color:var(--text-sec)" onclick="resetScan()"><i class="fas fa-redo"></i> 重新扫描</button></div></div>
-  <div id="aiPageRest">
-    <div class="ai-consult-card" onclick="openAIChat()"><div class="acc-icon">🤖</div><div class="acc-info"><div class="acc-title">在线兽医极速问诊</div><div class="acc-desc">AI预问诊 + 真人兽医复核</div></div><div class="acc-btn">立即问诊</div></div>
-    <div style="padding:0 20px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px"><div style="background:var(--card);border-radius:var(--radius-sm);padding:14px 8px;text-align:center;box-shadow:var(--shadow);cursor:pointer" onclick="showToast('🏥 附近医院')"><div style="font-size:24px;margin-bottom:4px">🏥</div><div style="font-size:11px;font-weight:600;color:var(--text-sec)">医院挂号</div></div><div style="background:var(--card);border-radius:var(--radius-sm);padding:14px 8px;text-align:center;box-shadow:var(--shadow);cursor:pointer" onclick="showToast('🛡️ 宠物医保')"><div style="font-size:24px;margin-bottom:4px">🛡️</div><div style="font-size:11px;font-weight:600;color:var(--text-sec)">宠物医保</div></div><div style="background:var(--card);border-radius:var(--radius-sm);padding:14px 8px;text-align:center;box-shadow:var(--shadow);cursor:pointer" onclick="showToast('📋 健康报告')"><div style="font-size:24px;margin-bottom:4px">📋</div><div style="font-size:11px;font-weight:600;color:var(--text-sec)">健康报告</div></div></div>
-  </div>
+  <div style="padding:0 20px"><button class="btn-primary" id="scanSubmitBtn" onclick="submitAIScan()" disabled style="opacity:.5"><i class="fas fa-brain"></i> 开始 AI 分析</button></div>
+  <div id="scanAnalyzing" style="display:none;text-align:center;padding:24px 20px"><div style="width:48px;height:48px;border:3.5px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px"></div><div style="font-size:14px;font-weight:600">🧠 AI 正在分析中...</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px">阿里云百炼大模型正在识别</div><div id="scanStreamPreview" class="scan-stream-preview"></div></div>
+  <div id="scanStreamResult" class="scan-stream-result" style="display:none"><div class="ssr-header"><div class="ssr-icon" style="background:var(--primary-light)">🔬</div><div><div style="font-size:15px;font-weight:700">AI 分析完成</div><div style="font-size:10px;color:var(--text-muted)">由阿里云百炼大模型提供</div></div></div><div class="ssr-body" id="ssrContent"></div><div class="ssr-actions"><button style="background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;box-shadow:0 4px 12px rgba(255,107,107,.3)" onclick="openAIChat()"><i class="fas fa-comment-medical"></i> 在线问诊</button><button style="background:var(--bg);color:var(--text-sec)" onclick="resetScan()"><i class="fas fa-redo"></i> 重新扫描</button></div></div>
+  <div id="aiPageRest"><div class="ai-consult-card" onclick="openAIChat()"><div class="acc-icon">🤖</div><div class="acc-info"><div class="acc-title">在线兽医极速问诊</div><div class="acc-desc">AI预问诊 + 真人兽医复核</div></div><div class="acc-btn">立即问诊</div></div>
+  <div style="padding:0 20px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px"><div style="background:var(--card);border-radius:var(--radius-sm);padding:14px 8px;text-align:center;box-shadow:var(--shadow);cursor:pointer" onclick="showToast('🏥 附近医院')"><div style="font-size:24px;margin-bottom:4px">🏥</div><div style="font-size:11px;font-weight:600;color:var(--text-sec)">医院挂号</div></div><div style="background:var(--card);border-radius:var(--radius-sm);padding:14px 8px;text-align:center;box-shadow:var(--shadow);cursor:pointer" onclick="showToast('🛡️ 宠物医保')"><div style="font-size:24px;margin-bottom:4px">🛡️</div><div style="font-size:11px;font-weight:600;color:var(--text-sec)">宠物医保</div></div><div style="background:var(--card);border-radius:var(--radius-sm);padding:14px 8px;text-align:center;box-shadow:var(--shadow);cursor:pointer" onclick="showToast('📋 健康报告')"><div style="font-size:24px;margin-bottom:4px">📋</div><div style="font-size:11px;font-weight:600;color:var(--text-sec)">健康报告</div></div></div></div>
 </div>
 
 <!-- ===== PAGE: 我的 ===== -->
 <div class="page" id="page-profile">
   <div class="profile-banner"><img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&h=320&fit=crop" alt=""><div class="pb-pets"><div class="pb-pet">🐱</div><div class="pb-pet">🐶</div><div class="pb-pet">🐱</div></div></div>
   <div class="profile-card-main">
-    <div class="pcm-avatar"><img src="https://images.unsplash.com/photo-1494790108755-2616b612b830?w=128&h=128&fit=crop&crop=face" alt=""></div>
+    <div class="pcm-avatar"><img src="https://images.unsplash.com/photo-1494790108755-2616b612b830?w=128&h=128&fit=crop&crop=face" alt="" onerror="this.onerror=null;this.src='https://i.pravatar.cc/128?img=1'"></div>
     <div class="pcm-name">橘子的铲屎官</div>
     <div class="pcm-id">ID: paw_2024_0816</div>
     <div class="pcm-bio">🧑‍💻 互联网打工人 | 2猫1狗铲屎官 | 坐标北京朝阳<br>🌍 养宠第3年 · 累计救助5只流浪猫</div>
@@ -404,61 +410,109 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
     <div class="pcm-stats"><div class="pcm-stat"><div class="pcm-stat-val">128</div><div class="pcm-stat-label">宠友</div></div><div class="pcm-stat"><div class="pcm-stat-val">56</div><div class="pcm-stat-label">关注</div></div><div class="pcm-stat"><div class="pcm-stat-val">892</div><div class="pcm-stat-label">获赞</div></div><div class="pcm-stat"><div class="pcm-stat-val">36</div><div class="pcm-stat-label">动态</div></div></div>
   </div>
   <div class="profile-quick-row">
-    <div class="profile-quick-item" onclick="showToast('❤️ 我的收藏')"><div class="pqi-icon">❤️</div><div class="pqi-label">收藏</div><div class="pqi-sub">28篇</div></div>
-    <div class="profile-quick-item" onclick="showToast('📝 健康记录')"><div class="pqi-icon">📝</div><div class="pqi-label">记录</div><div class="pqi-sub">3条待办</div></div>
-    <div class="profile-quick-item" onclick="showToast('🏆 成就')"><div class="pqi-icon">🏆</div><div class="pqi-label">成就</div><div class="pqi-sub">12枚</div></div>
-    <div class="profile-quick-item" onclick="showToast('🛒 订单')"><div class="pqi-icon">📦</div><div class="pqi-label">订单</div><div class="pqi-sub">3笔</div></div>
+    <div class="profile-quick-item" onclick="openSubPage('collection')"><div class="pqi-icon">❤️</div><div class="pqi-label">收藏</div><div class="pqi-sub">28篇</div></div>
+    <div class="profile-quick-item" onclick="openSubPage('records')"><div class="pqi-icon">📝</div><div class="pqi-label">记录</div><div class="pqi-sub">3条待办</div></div>
+    <div class="profile-quick-item" onclick="openSubPage('achievements')"><div class="pqi-icon">🏆</div><div class="pqi-label">成就</div><div class="pqi-sub">12枚</div></div>
+    <div class="profile-quick-item" onclick="openSubPage('orders')"><div class="pqi-icon">📦</div><div class="pqi-label">订单</div><div class="pqi-sub">3笔</div></div>
   </div>
-  <div class="vip-card" onclick="showToast('👑 开通会员')"><div class="vc-icon">👑</div><div class="vc-info"><div class="vc-title">开通爪印会员</div><div class="vc-desc">无限AI扫描 · 专属兽医 · 会员折扣</div></div><i class="fas fa-chevron-right" style="color:rgba(255,255,255,.4);font-size:12px"></i></div>
+  <div class="vip-card" onclick="openSubPage('vip')"><div class="vc-icon">👑</div><div class="vc-info"><div class="vc-title">开通爪印会员</div><div class="vc-desc">无限AI扫描 · 专属兽医 · 会员折扣</div></div><i class="fas fa-chevron-right" style="color:rgba(255,255,255,.4);font-size:12px"></i></div>
   <div class="menu-list">
     <div class="menu-item" onclick="openApiKeyModal()"><div class="mi-icon" style="background:#F0EEFF;color:#6C5CE7">🔑</div><div class="mi-label">百炼 API Key</div><span class="badge badge-purple" id="profileKeyBadge">未设置</span><i class="fas fa-chevron-right mi-arrow"></i></div>
     <div class="menu-item" onclick="switchTab(2)"><div class="mi-icon" style="background:#FFE0E0;color:var(--primary)">🤖</div><div class="mi-label">AI 宠医</div><i class="fas fa-chevron-right mi-arrow"></i></div>
-    <div class="menu-item" onclick="openRecordModal('feed')"><div class="mi-icon" style="background:#E0F7F5;color:var(--secondary)">📝</div><div class="mi-label">健康记录</div><span class="badge badge-red">3条</span><i class="fas fa-chevron-right mi-arrow"></i></div>
+    <div class="menu-item" onclick="openSubPage('records')"><div class="mi-icon" style="background:#E0F7F5;color:var(--secondary)">📝</div><div class="mi-label">健康记录</div><span class="badge badge-red">3条</span><i class="fas fa-chevron-right mi-arrow"></i></div>
   </div>
   <div class="menu-list">
-    <div class="menu-item" onclick="showToast('🏥 附近医院')"><div class="mi-icon" style="background:#EBF5FF;color:#0984E3">🏥</div><div class="mi-label">附近医院</div><i class="fas fa-chevron-right mi-arrow"></i></div>
-    <div class="menu-item" onclick="showToast('🛡️ 宠物医保')"><div class="mi-icon" style="background:#E0FFF5;color:var(--green)">🛡️</div><div class="mi-label">宠物医保</div><i class="fas fa-chevron-right mi-arrow"></i></div>
-    <div class="menu-item" onclick="showToast('🧬 基因保存')"><div class="mi-icon" style="background:#F0EEFF;color:#6C5CE7">🧬</div><div class="mi-label">基因保存</div><i class="fas fa-chevron-right mi-arrow"></i></div>
+    <div class="menu-item" onclick="openSubPage('hospital')"><div class="mi-icon" style="background:#EBF5FF;color:#0984E3">🏥</div><div class="mi-label">附近医院</div><i class="fas fa-chevron-right mi-arrow"></i></div>
+    <div class="menu-item" onclick="openSubPage('insurance')"><div class="mi-icon" style="background:#E0FFF5;color:var(--green)">🛡️</div><div class="mi-label">宠物医保</div><i class="fas fa-chevron-right mi-arrow"></i></div>
+    <div class="menu-item" onclick="openSubPage('gene')"><div class="mi-icon" style="background:#F0EEFF;color:#6C5CE7">🧬</div><div class="mi-label">基因保存</div><i class="fas fa-chevron-right mi-arrow"></i></div>
   </div>
   <div class="menu-list">
-    <div class="menu-item" onclick="showToast('⚙️ 设置')"><div class="mi-icon" style="background:#F0F0F5;color:var(--text-sec)">⚙️</div><div class="mi-label">设置</div><i class="fas fa-chevron-right mi-arrow"></i></div>
-    <div class="menu-item" onclick="showToast('📞 联系客服')"><div class="mi-icon" style="background:#F0F0F5;color:var(--text-sec)">📞</div><div class="mi-label">联系客服</div><i class="fas fa-chevron-right mi-arrow"></i></div>
+    <div class="menu-item" onclick="openSubPage('settings')"><div class="mi-icon" style="background:#F0F0F5;color:var(--text-sec)">⚙️</div><div class="mi-label">设置</div><i class="fas fa-chevron-right mi-arrow"></i></div>
+    <div class="menu-item" onclick="openSubPage('help')"><div class="mi-icon" style="background:#F0F0F5;color:var(--text-sec)">📞</div><div class="mi-label">联系客服</div><i class="fas fa-chevron-right mi-arrow"></i></div>
   </div>
   <div style="height:20px"></div>
 </div>
 
-<!-- ===== Bottom Nav: 社区 | 宠友 | +(发布) | AI宠医 | 我的 ===== -->
+<!-- ===== Bottom Nav ===== -->
 <div class="bottom-nav">
   <div class="nav-item active" onclick="switchTab(0)"><i class="fas fa-compass"></i><span>社区</span></div>
-  <div class="nav-item" onclick="switchTab(1)"><i class="fas fa-paw"></i><span>宠友</span><div class="nav-dot"></div></div>
+  <div class="nav-item" onclick="switchTab(1)"><i class="fas fa-paw"></i><span>宠友</span></div>
   <div class="nav-item center-btn" onclick="openPublishModal()"><i class="fas fa-plus"></i></div>
   <div class="nav-item" onclick="switchTab(2)"><i class="fas fa-stethoscope"></i><span>宠医</span></div>
   <div class="nav-item" onclick="switchTab(3)"><i class="fas fa-user"></i><span>我的</span></div>
 </div>
 
-<!-- ===== Detail Overlay ===== -->
-<div class="detail-overlay" id="detailOverlay">
-  <div class="detail-inner" id="detailInner"></div>
+<!-- ===== Search Page ===== -->
+<div class="overlay-page" id="searchPage">
+  <div class="overlay-inner">
+    <div class="overlay-header"><button class="oh-back" onclick="closeOverlay('searchPage')"><i class="fas fa-arrow-left"></i></button><input type="text" placeholder="搜索宠物、用户、话题..." style="flex:1;padding:8px 14px;border:1.5px solid var(--border);border-radius:var(--radius-full);font-size:13px;font-family:inherit;outline:none;background:var(--bg)"></div>
+    <div class="overlay-body">
+      <div class="search-hot"><h4>🔥 热门搜索</h4><div class="sh-tags"><span class="sh-tag" onclick="showToast('搜索：猫癣治疗')">猫癣治疗</span><span class="sh-tag" onclick="showToast('搜索：柯基短腿')">柯基短腿</span><span class="sh-tag" onclick="showToast('搜索：自制猫饭')">自制猫饭</span><span class="sh-tag" onclick="showToast('搜索：泪痕清理')">泪痕清理</span><span class="sh-tag" onclick="showToast('搜索：疫苗攻略')">疫苗攻略</span><span class="sh-tag" onclick="showToast('搜索：宠物减肥')">宠物减肥</span></div></div>
+      <div class="search-history"><h4>📋 搜索历史</h4><div class="sh-item"><span>英短蓝猫性格</span><i class="fas fa-times" style="color:var(--text-muted);font-size:12px;cursor:pointer"></i></div><div class="sh-item"><span>猫咪驱虫药推荐</span><i class="fas fa-times" style="color:var(--text-muted);font-size:12px;cursor:pointer"></i></div><div class="sh-item"><span>柯基掉毛怎么办</span><i class="fas fa-times" style="color:var(--text-muted);font-size:12px;cursor:pointer"></i></div></div>
+      <div style="padding:16px 18px"><h4 style="font-size:14px;font-weight:700;margin-bottom:10px">💡 猜你想搜</h4><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div style="background:var(--card);border-radius:var(--radius-sm);padding:12px;box-shadow:var(--shadow);cursor:pointer" onclick="showToast('搜索：新手养猫')"><div style="font-size:13px;font-weight:600">新手养猫必看</div><div style="font-size:10px;color:var(--text-muted);margin-top:2px">1.2万浏览</div></div><div style="background:var(--card);border-radius:var(--radius-sm);padding:12px;box-shadow:var(--shadow);cursor:pointer" onclick="showToast('搜索：宠物疫苗')"><div style="font-size:13px;font-weight:600">宠物疫苗接种</div><div style="font-size:10px;color:var(--text-muted);margin-top:2px">8.6千浏览</div></div><div style="background:var(--card);border-radius:var(--radius-sm);padding:12px;box-shadow:var(--shadow);cursor:pointer" onclick="showToast('搜索：猫粮推荐')"><div style="font-size:13px;font-weight:600">猫粮测评排行</div><div style="font-size:10px;color:var(--text-muted);margin-top:2px">2.3万浏览</div></div><div style="background:var(--card);border-radius:var(--radius-sm);padding:12px;box-shadow:var(--shadow);cursor:pointer" onclick="showToast('搜索：狗狗训练')"><div style="font-size:13px;font-weight:600">狗狗训练技巧</div><div style="font-size:10px;color:var(--text-muted);margin-top:2px">5.1千浏览</div></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Message Page ===== -->
+<div class="overlay-page" id="messagePage">
+  <div class="overlay-inner">
+    <div class="overlay-header"><button class="oh-back" onclick="closeOverlay('messagePage')"><i class="fas fa-arrow-left"></i></button><div class="oh-title">消息</div></div>
+    <div class="overlay-body">
+      <div style="display:flex;gap:0;padding:12px 18px;border-bottom:1px solid var(--border)">
+        <div style="flex:1;text-align:center;cursor:pointer;padding:8px 0" onclick="showToast('💬 私信')"><div style="font-size:20px;margin-bottom:2px">💬</div><div style="font-size:11px;font-weight:600">私信</div><span class="badge badge-red" style="font-size:9px;margin-top:2px">3</span></div>
+        <div style="flex:1;text-align:center;cursor:pointer;padding:8px 0" onclick="showToast('🔔 通知')"><div style="font-size:20px;margin-bottom:2px">🔔</div><div style="font-size:11px;font-weight:600">通知</div><span class="badge badge-red" style="font-size:9px;margin-top:2px">5</span></div>
+        <div style="flex:1;text-align:center;cursor:pointer;padding:8px 0" onclick="showToast('👥 好友申请')"><div style="font-size:20px;margin-bottom:2px">👥</div><div style="font-size:11px;font-weight:600">好友</div><span class="badge badge-red" style="font-size:9px;margin-top:2px">2</span></div>
+      </div>
+      <div class="msg-item" onclick="openPrivateChat(1,'猫猫妈')"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=96&h=96&fit=crop&crop=face" alt=""><div class="mi-info"><div class="mi-top"><span class="mi-name">猫猫妈</span><span class="mi-time">刚刚</span></div><div class="mi-text">我家蓝猫也想和团子玩～</div></div><div class="mi-dot"></div></div>
+      <div class="msg-item" onclick="showToast('💬 打开对话')"><img src="https://images.unsplash.com/photo-1514315384763-ba401779410f?w=96&h=96&fit=crop&crop=face" alt=""><div class="mi-info"><div class="mi-top"><span class="mi-name">柯基控</span><span class="mi-time">10分钟前</span></div><div class="mi-text">周末奥森约遛狗吗？</div></div><div class="mi-dot"></div></div>
+      <div class="msg-item" onclick="showToast('💬 打开对话')"><img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=96&h=96&fit=crop&crop=face" alt=""><div class="mi-info"><div class="mi-top"><span class="mi-name">橘座家</span><span class="mi-time">1小时前</span></div><div class="mi-text">橘猫减肥打卡第15天！</div></div></div>
+      <div class="msg-item" onclick="showToast('💬 打开对话')"><img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=96&h=96&fit=crop&crop=face" alt=""><div class="mi-info"><div class="mi-top"><span class="mi-name">布偶妈妈</span><span class="mi-time">昨天</span></div><div class="mi-text">猫三联打完多久可以洗澡？</div></div></div>
+      <div style="text-align:center;padding:20px;font-size:12px;color:var(--text-muted)">— 以上是全部消息 —</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== User Profile Page ===== -->
+<div class="overlay-page" id="userProfilePage">
+  <div class="overlay-inner" id="userProfileContent"></div>
+</div>
+
+<!-- ===== Private Chat Page ===== -->
+<div class="overlay-page" id="privateChatPage">
+  <div class="overlay-inner" id="privateChatContent"></div>
+</div>
+
+<!-- ===== Detail Page ===== -->
+<div class="overlay-page" id="detailOverlay">
+  <div class="overlay-inner" id="detailInner"></div>
+</div>
+
+<!-- ===== Sub Pages (generic) ===== -->
+<div class="overlay-page" id="subPage">
+  <div class="overlay-inner" id="subPageContent"></div>
 </div>
 
 <!-- ===== Image Viewer ===== -->
-<div class="img-viewer" id="imgViewer" onclick="closeImgViewer()">
-  <div class="iv-close" onclick="closeImgViewer()"><i class="fas fa-times"></i></div>
-  <img id="imgViewerImg" src="" alt="">
-  <div class="iv-counter" id="imgViewerCounter"></div>
+<div class="img-viewer" id="imgViewer" onclick="closeImgViewer()"><div class="iv-close" onclick="closeImgViewer()"><i class="fas fa-times"></i></div><img id="imgViewerImg" src="" alt=""></div>
+
+<!-- ===== AI Chat Page ===== -->
+<div class="overlay-page" id="aiChatPage">
+  <div class="overlay-inner">
+    <div class="overlay-header"><button class="oh-back" onclick="closeOverlay('aiChatPage')"><i class="fas fa-arrow-left"></i></button><div class="oh-title">AI 宠医助手</div><span class="badge badge-green" style="font-size:10px">在线</span></div>
+    <div class="chat-messages" id="chatMessages"><div class="msg ai"><div class="msg-avatar">🤖</div><div class="msg-bubble">您好！我是爪印AI宠医助手 🐾<br>请描述您宠物的症状，我会为您初步分析。</div></div></div>
+    <div class="chat-input-bar"><input type="text" placeholder="描述宠物的症状..." id="chatInput" onkeypress="if(event.key==='Enter')sendChatMsg()"><button class="ci-send" onclick="sendChatMsg()"><i class="fas fa-paper-plane"></i></button></div>
+  </div>
 </div>
 
 <!-- ===== Record Modal ===== -->
 <div class="record-modal" id="recordModal"><div class="record-form"><div class="modal-handle"></div><h3 style="font-size:17px;font-weight:700;margin-bottom:16px" id="recordTitle">记录喂食</h3><div class="form-group"><label>时间</label><input type="datetime-local" id="recordTime"></div><div class="form-group" id="recordField1"><label id="field1Label">食物类型</label><select id="field1Select"><option>干粮</option><option>湿粮</option><option>零食</option><option>自制饭</option></select></div><div class="form-group" id="recordField2"><label id="field2Label">食量</label><select id="field2Select"><option>少量</option><option>正常</option><option>较多</option><option>未进食</option></select></div><div class="form-group"><label>备注</label><textarea rows="2" placeholder="添加备注..." id="recordNote"></textarea></div><button class="btn-primary" onclick="saveRecord()">保存</button><button class="btn-secondary" onclick="closeRecordModal()">取消</button></div></div>
 
 <!-- ===== API Key Modal ===== -->
-<div class="modal-overlay" id="apiKeyModal"><div class="modal-content"><div class="modal-handle"></div><div style="text-align:center;margin-bottom:16px"><div style="font-size:42px;margin-bottom:6px">🔑</div><h3 style="font-size:17px;font-weight:700">阿里云百炼 API Key</h3><p style="font-size:11px;color:var(--text-muted);margin-top:3px">连接百炼大模型，启用真实AI视觉识别</p></div><div class="form-group"><label>API Key</label><input type="password" id="apiKeyInput" placeholder="sk-xxxxxxxxxxxxxxxx" style="font-family:monospace"></div><div style="background:var(--blue-light);border-radius:var(--radius-sm);padding:10px;margin-bottom:14px;font-size:11px;color:#0984E3;line-height:1.6">💡 访问 <a href="https://bailian.console.aliyun.com" target="_blank" style="color:#0984E3;text-decoration:underline">百炼控制台</a> 创建 API Key<br>⚠️ Key 仅保存在本地浏览器</div><button class="btn-primary" id="apiKeyVerifyBtn" onclick="verifyAndSaveApiKey()">验证并保存</button><button class="btn-secondary" onclick="closeApiKeyModal()">取消</button><div id="apiKeyStatus" style="text-align:center;margin-top:10px;font-size:11px;color:var(--text-muted)"></div></div></div>
+<div class="modal-overlay" id="apiKeyModal"><div class="modal-content"><div class="modal-handle"></div><div style="text-align:center;margin-bottom:16px"><div style="font-size:42px;margin-bottom:6px">🔑</div><h3 style="font-size:17px;font-weight:700">阿里云百炼 API Key</h3></div><div class="form-group"><label>API Key</label><input type="password" id="apiKeyInput" placeholder="sk-xxxxxxxxxxxxxxxx" style="font-family:monospace"></div><div style="background:var(--blue-light);border-radius:var(--radius-sm);padding:10px;margin-bottom:14px;font-size:11px;color:#0984E3;line-height:1.6">💡 访问 <a href="https://bailian.console.aliyun.com" target="_blank" style="color:#0984E3;text-decoration:underline">百炼控制台</a> 创建 API Key<br>⚠️ Key 仅保存在本地浏览器</div><button class="btn-primary" id="apiKeyVerifyBtn" onclick="verifyAndSaveApiKey()">验证并保存</button><button class="btn-secondary" onclick="closeApiKeyModal()">取消</button><div id="apiKeyStatus" style="text-align:center;margin-top:10px;font-size:11px;color:var(--text-muted)"></div></div></div>
 
 <!-- ===== Publish Modal ===== -->
 <div class="publish-modal" id="publishModal"><div class="publish-inner"><div class="publish-header"><div class="ph-cancel" onclick="closePublishModal()">取消</div><div class="ph-title">发布动态</div><button class="ph-post" id="pubPostBtn" onclick="submitPublish()" disabled>发布</button></div><div class="publish-photos" id="pubPhotos"><div class="pub-add-photo" onclick="document.getElementById('pubFileInput').click()"><i class="fas fa-plus"></i><span>添加照片</span></div></div><div class="publish-content"><textarea placeholder="分享你和宠物的日常..." id="pubText" oninput="onPubTextChange()"></textarea></div><div class="publish-tags"><div class="ptag" onclick="togglePubTag(this)">🐱 猫咪日常</div><div class="ptag" onclick="togglePubTag(this)">🐶 狗狗日记</div><div class="ptag" onclick="togglePubTag(this)">🏥 养护心得</div><div class="ptag" onclick="togglePubTag(this)">🍖 美食分享</div><div class="ptag" onclick="togglePubTag(this)">📸 萌宠出片</div><div class="ptag" onclick="togglePubTag(this)">❓ 求助问诊</div></div></div></div>
-
-<!-- ===== AI Chat ===== -->
-<div class="ai-chat" id="aiChat"><div class="chat-inner"><div class="chat-header"><button class="back-btn" onclick="closeAIChat()"><i class="fas fa-arrow-left"></i></button><div class="ch-info"><div class="ch-name">AI 宠医助手</div><div class="ch-status">● 在线</div></div><span class="badge badge-green" style="font-size:10px">AI问诊</span></div><div class="chat-messages" id="chatMessages"><div class="msg ai"><div class="msg-avatar">🤖</div><div class="msg-bubble">您好！我是爪印AI宠医助手 🐾<br>请描述您宠物的症状，我会为您初步分析。</div></div></div><div class="chat-input"><input type="text" placeholder="描述宠物的症状..." id="chatInput" onkeypress="if(event.key==='Enter')sendChatMsg()"><button class="send-btn" onclick="sendChatMsg()"><i class="fas fa-paper-plane"></i></button></div></div></div>
 
 <input type="file" id="scanFileInput" accept="image/*" style="display:none" onchange="handleScanFile(this)">
 <input type="file" id="scanCameraInput" accept="image/*" capture="environment" style="display:none" onchange="handleScanFile(this)">
@@ -467,15 +521,33 @@ body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;back
 
 <script>
 const pages=['page-community','page-social','page-ai','page-profile'];
-const navItems=document.querySelectorAll('.nav-item');
-let currentScanType='',scanImageBase64='',scanImageMime='',apiKey=localStorage.getItem('bailian_api_key')||'';
+const navItems=document.querySelectorAll('.bottom-nav .nav-item');
+let currentScanType='skin',scanImageBase64='',scanImageMime='',apiKey=localStorage.getItem('bailian_api_key')||'';
 
-function switchTab(idx){pages.forEach((p,i)=>document.getElementById(p).classList.toggle('active',i===idx));navItems.forEach((n,i)=>n.classList.toggle('active',i===idx));}
+// ===== Tab Switching (Bug #7 fix: 5 items, correct mapping) =====
+function switchTab(idx){
+  pages.forEach((p,i)=>document.getElementById(p).classList.toggle('active',i===idx));
+  // navItems: [0=社区, 1=宠友, 2=+(center), 3=宠医, 4=我的]
+  // tab idx mapping: 0→nav[0], 1→nav[1], 2→nav[3], 3→nav[4]
+  const navMap=[0,1,3,4];
+  navItems.forEach((n,i)=>n.classList.toggle('active',i===navMap[idx]));
+}
+
+// ===== Toast =====
 function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+// ===== Overlay Pages =====
+function openOverlay(id){document.getElementById(id).classList.add('show');}
+function closeOverlay(id){document.getElementById(id).classList.remove('show');}
+function openSearchPage(){openOverlay('searchPage');}
+function openMessagePage(){openOverlay('messagePage');}
+function openAIChat(){openOverlay('aiChatPage');chatStep=0;}
+
+// ===== Community Tabs =====
 function switchCommunityTab(el){document.querySelectorAll('.community-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
 
-// ===== Waterfall Data =====
-const femaleAvatars=[
+// ===== Waterfall =====
+const AV=[
   'https://images.unsplash.com/photo-1494790108755-2616b612b830?w=60&h=60&fit=crop&crop=face',
   'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face',
   'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=60&h=60&fit=crop&crop=face',
@@ -487,71 +559,99 @@ const femaleAvatars=[
   'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=60&h=60&fit=crop&crop=face',
   'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face',
 ];
+const UN=['猫猫小管家','柯基控','养猫指南','橘座驾到','萨摩微笑天使','宠物营养师','布偶妈妈','泰迪爱画画','宠物医生小王','金毛大暖男'];
+const UB=['2猫 · 北京朝阳','1狗 · 北京海淀','5年养猫经验','3猫 · 上海浦东','1狗 · 北京西城','专业营养师','2猫 · 深圳南山','2狗 · 杭州西湖','执业兽医','1狗 · 成都锦江'];
 const posts=[
-  {id:1,user:'猫猫小管家',av:0,title:'团子今天又偷吃狗粮了，被我抓个正着😂',img:'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400&h=500&fit=crop',h:220,likes:328,tag:'猫咪日常',tagColor:'var(--primary-light)',tagText:'var(--primary)',loc:'北京朝阳',comments:[{av:2,name:'布偶妈妈',text:'哈哈哈太可爱了！',time:'2小时前'},{av:5,name:'橘座家',text:'我家也是！偷吃成瘾',time:'1小时前'}]},
-  {id:2,user:'柯基控',av:1,title:'旺财的短腿日常：追蝴蝶追了半小时一个都没抓到',img:'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=320&fit=crop',h:180,likes:562,tag:'狗狗日记',tagColor:'var(--secondary-light)',tagText:'var(--secondary)',loc:'北京海淀',comments:[{av:3,name:'柯基控',text:'短腿的忧伤啊😂',time:'3小时前'}]},
-  {id:3,user:'养猫指南',av:2,title:'新手养猫必看！猫三联疫苗接种全攻略',img:'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?w=400&h=400&fit=crop',h:240,likes:1203,tag:'养护心得',tagColor:'var(--green-light)',tagText:'var(--green)',loc:'',comments:[{av:6,name:'新手猫妈',text:'太及时了！刚领养一只',time:'5小时前'},{av:0,name:'猫猫小管家',text:'收藏了！',time:'4小时前'},{av:4,name:'萨摩家长',text:'狗狗也需要哦',time:'3小时前'}]},
-  {id:4,user:'橘座驾到',av:3,title:'十橘九胖不是传说，我家小橘3个月就已经5斤了',img:'https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=400&h=480&fit=crop',h:260,likes:891,tag:'猫咪日常',tagColor:'var(--primary-light)',tagText:'var(--primary)',loc:'上海浦东',comments:[]},
-  {id:5,user:'萨摩微笑天使',av:4,title:'雪球的毛太白了，每次出门都像一朵行走的棉花糖',img:'https://images.unsplash.com/photo-1529429617124-95b109e86bb8?w=400&h=350&fit=crop',h:200,likes:445,tag:'萌宠出片',tagColor:'var(--purple-light)',tagText:'#6C5CE7',loc:'北京西城',comments:[{av:1,name:'柯基控',text:'好想rua！',time:'6小时前'}]},
-  {id:6,user:'宠物营养师',av:5,title:'自制猫饭食谱分享！鸡胸肉+南瓜+鱼油',img:'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=300&fit=crop',h:170,likes:678,tag:'美食分享',tagColor:'var(--yellow-light)',tagText:'var(--orange)',loc:'',comments:[]},
-  {id:7,user:'布偶妈妈',av:6,title:'布偶猫的蓝眼睛真的太好看了，每次对视都心动',img:'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=400&h=500&fit=crop',h:270,likes:2104,tag:'萌宠出片',tagColor:'var(--purple-light)',tagText:'#6C5CE7',loc:'深圳南山',comments:[{av:0,name:'猫猫小管家',text:'太美了！',time:'1天前'}]},
-  {id:8,user:'泰迪爱画画',av:7,title:'给小泰迪穿了新买的雨衣，看起来像个小蘑菇🍄',img:'https://images.unsplash.com/photo-1583337130417-13104dec14a2?w=400&h=380&fit=crop',h:210,likes:334,tag:'狗狗日记',tagColor:'var(--secondary-light)',tagText:'var(--secondary)',loc:'杭州西湖',comments:[]},
-  {id:9,user:'宠物医生小王',av:8,title:'猫咪频繁呕吐怎么办？这几种情况一定要及时就医！',img:'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=360&fit=crop',h:200,likes:1567,tag:'求助问诊',tagColor:'var(--red-light)',tagText:'var(--red)',loc:'',comments:[{av:2,name:'布偶妈妈',text:'收藏了，谢谢医生',time:'8小时前'}]},
-  {id:10,user:'金毛大暖男',av:9,title:'金毛太暖了，每次我难过它都会默默靠过来',img:'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=400&h=440&fit=crop',h:250,likes:723,tag:'狗狗日记',tagColor:'var(--secondary-light)',tagText:'var(--secondary)',loc:'成都锦江',comments:[{av:4,name:'萨摩家长',text:'大狗真的超暖❤️',time:'12小时前'}]},
+  {id:1,user:UN[0],av:0,title:'团子今天又偷吃狗粮了，被我抓个正着😂',img:'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400&h=500&fit=crop',h:220,likes:328,tag:'猫咪日常',tagColor:'var(--primary-light)',tagText:'var(--primary)',loc:'北京朝阳',comments:[{av:2,name:UN[2],text:'哈哈哈太可爱了！',time:'2小时前'},{av:5,name:UN[5],text:'我家也是！偷吃成瘾',time:'1小时前'}]},
+  {id:2,user:UN[1],av:1,title:'旺财的短腿日常：追蝴蝶追了半小时一个都没抓到',img:'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=320&fit=crop',h:180,likes:562,tag:'狗狗日记',tagColor:'var(--secondary-light)',tagText:'var(--secondary)',loc:'北京海淀',comments:[{av:3,name:UN[3],text:'短腿的忧伤啊😂',time:'3小时前'}]},
+  {id:3,user:UN[2],av:2,title:'新手养猫必看！猫三联疫苗接种全攻略',img:'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?w=400&h=400&fit=crop',h:240,likes:1203,tag:'养护心得',tagColor:'var(--green-light)',tagText:'var(--green)',loc:'',comments:[{av:6,name:UN[6],text:'太及时了！刚领养一只',time:'5小时前'},{av:0,name:UN[0],text:'收藏了！',time:'4小时前'}]},
+  {id:4,user:UN[3],av:3,title:'十橘九胖不是传说，我家小橘3个月就已经5斤了',img:'https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=400&h=480&fit=crop',h:260,likes:891,tag:'猫咪日常',tagColor:'var(--primary-light)',tagText:'var(--primary)',loc:'上海浦东',comments:[]},
+  {id:5,user:UN[4],av:4,title:'雪球的毛太白了，每次出门都像一朵行走的棉花糖',img:'https://images.unsplash.com/photo-1529429617124-95b109e86bb8?w=400&h=350&fit=crop',h:200,likes:445,tag:'萌宠出片',tagColor:'var(--purple-light)',tagText:'#6C5CE7',loc:'北京西城',comments:[{av:1,name:UN[1],text:'好想rua！',time:'6小时前'}]},
+  {id:6,user:UN[5],av:5,title:'自制猫饭食谱分享！鸡胸肉+南瓜+鱼油',img:'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=300&fit=crop',h:170,likes:678,tag:'美食分享',tagColor:'var(--yellow-light)',tagText:'var(--orange)',loc:'',comments:[]},
+  {id:7,user:UN[6],av:6,title:'布偶猫的蓝眼睛真的太好看了，每次对视都心动',img:'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=400&h=500&fit=crop',h:270,likes:2104,tag:'萌宠出片',tagColor:'var(--purple-light)',tagText:'#6C5CE7',loc:'深圳南山',comments:[{av:0,name:UN[0],text:'太美了！',time:'1天前'}]},
+  {id:8,user:UN[7],av:7,title:'给小泰迪穿了新买的雨衣，看起来像个小蘑菇🍄',img:'https://images.unsplash.com/photo-1583337130417-13104dec14a2?w=400&h=380&fit=crop',h:210,likes:334,tag:'狗狗日记',tagColor:'var(--secondary-light)',tagText:'var(--secondary)',loc:'杭州西湖',comments:[]},
+  {id:9,user:UN[8],av:8,title:'猫咪频繁呕吐怎么办？这几种情况一定要及时就医！',img:'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=360&fit=crop',h:200,likes:1567,tag:'求助问诊',tagColor:'var(--red-light)',tagText:'var(--red)',loc:'',comments:[{av:6,name:UN[6],text:'收藏了，谢谢医生',time:'8小时前'}]},
+  {id:10,user:UN[9],av:9,title:'金毛太暖了，每次我难过它都会默默靠过来',img:'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=400&h=440&fit=crop',h:250,likes:723,tag:'狗狗日记',tagColor:'var(--secondary-light)',tagText:'var(--secondary)',loc:'成都锦江',comments:[{av:4,name:UN[4],text:'大狗真的超暖❤️',time:'12小时前'}]},
 ];
 
 function renderWaterfall(){
   const c=document.getElementById('waterfallContainer');
-  c.innerHTML=posts.map((p,i)=>`
-    <div class="wf-card" style="animation-delay:${i*0.06}s" onclick="openDetail(${p.id})">
-      <div class="wf-img" style="height:${p.h}px;background:linear-gradient(135deg,var(--primary-light),var(--border));display:flex;align-items:center;justify-content:center;overflow:hidden">
-        <img src="${p.img}" alt="" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">
-      </div>
-      <div class="wf-body">
-        <div class="wf-title">${p.title}</div>
-        <span class="wf-tag" style="background:${p.tagColor};color:${p.tagText}">${p.tag}</span>
-        ${p.loc?`<div class="wf-location"><i class="fas fa-map-marker-alt"></i>${p.loc}</div>`:''}
-        <div class="wf-footer">
-          <div class="wf-user"><img src="${femaleAvatars[p.av]}" alt="" onerror="this.style.display='none'"><span class="wf-uname">${p.user}</span></div>
-          <div class="wf-likes" onclick="event.stopPropagation();toggleLike(this,${p.id})"><i class="far fa-heart"></i> ${p.likes>999?(p.likes/1000).toFixed(1)+'k':p.likes}</div>
-        </div>
-      </div>
-    </div>
-  `).join('');
+  c.innerHTML=posts.map((p,i)=>`<div class="wf-card" style="animation-delay:${i*0.06}s" onclick="openDetail(${p.id})"><div class="wf-img" style="height:${p.h}px;background:linear-gradient(135deg,var(--primary-light),var(--border));overflow:hidden"><img src="${p.img}" alt="" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"></div><div class="wf-body"><div class="wf-title">${p.title}</div><span class="wf-tag" style="background:${p.tagColor};color:${p.tagText}">${p.tag}</span>${p.loc?`<div class="wf-location"><i class="fas fa-map-marker-alt"></i>${p.loc}</div>`:''}<div class="wf-footer"><div class="wf-user" onclick="event.stopPropagation();openUserProfile(${p.av})"><img src="${AV[p.av]}" alt="" onerror="this.style.display='none'"><span class="wf-uname">${p.user}</span></div><div class="wf-likes" onclick="event.stopPropagation();toggleLike(this,${p.id})"><i class="far fa-heart"></i> ${p.likes>999?(p.likes/1000).toFixed(1)+'k':p.likes}</div></div></div></div>`).join('');
 }
 function toggleLike(el,id){el.classList.toggle('liked');if(el.classList.contains('liked')){el.innerHTML='<i class="fas fa-heart"></i> '+(parseInt(el.textContent.replace(/\D/g,''))+1);showToast('❤️ 已点赞');}else{el.innerHTML='<i class="far fa-heart"></i> '+(parseInt(el.textContent.replace(/\D/g,''))-1);}}
 
 // ===== Detail Page =====
 function openDetail(id){
   const p=posts.find(x=>x.id===id);if(!p)return;
-  const d=document.getElementById('detailOverlay');
   document.getElementById('detailInner').innerHTML=`
-    <div class="detail-header"><button class="dh-back" onclick="closeDetail()"><i class="fas fa-arrow-left"></i></button><div class="dh-user"><img src="${femaleAvatars[p.av]}" alt="" onerror="this.style.display='none'"><div><div class="dh-name">${p.user}</div><div class="dh-time">3小时前</div></div></div><button class="dh-follow" onclick="showToast('✅ 已关注')">+关注</button></div>
-    <div class="detail-photos" onclick="openImgViewer('${p.img}')"><div class="detail-photos-inner"><img src="${p.img}" alt="" style="cursor:zoom-in" onerror="this.style.display='none'"></div></div>
-    <div class="detail-content">
-      <div class="dc-title">${p.title}</div>
-      <div class="dc-tags"><span class="dc-tag" style="background:${p.tagColor};color:${p.tagText}">${p.tag}</span>${p.loc?`<span class="dc-tag" style="background:var(--bg);color:var(--text-sec)"><i class="fas fa-map-marker-alt"></i> ${p.loc}</span>`:''}</div>
-    </div>
-    <div class="detail-actions">
-      <div class="da-item" onclick="this.classList.toggle('liked');showToast(this.classList.contains('liked')?'❤️ 已点赞':'取消点赞')"><i class="far fa-heart"></i> ${p.likes}</div>
-      <div class="da-item" onclick="document.getElementById('commentInput').focus()"><i class="far fa-comment"></i> ${p.comments.length}</div>
-      <div class="da-item" onclick="this.classList.toggle('collected');showToast(this.classList.contains('collected')?'⭐ 已收藏':'取消收藏')"><i class="far fa-bookmark"></i></div>
-      <div class="da-item" style="margin-left:auto" onclick="showToast('🔗 已复制链接')"><i class="fas fa-share-alt"></i></div>
-    </div>
-    <div class="detail-comments">
-      <div class="dc-section-title">评论 ${p.comments.length}</div>
-      ${p.comments.length?p.comments.map(c=>`<div class="comment-item"><img src="${femaleAvatars[c.av]}" alt="" onerror="this.style.display='none'"><div class="ci-body"><div class="ci-name">${c.name}</div><div class="ci-text">${c.text}</div><div class="ci-meta"><span>${c.time}</span><span style="cursor:pointer">点赞</span><span style="cursor:pointer">回复</span></div></div></div>`).join(''):'<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">暂无评论，来说两句吧～</div>'}
-    </div>
-    <div class="detail-comment-input"><input type="text" id="commentInput" placeholder="写下你的评论..."><button onclick="submitComment()">发送</button></div>
-  `;
-  d.classList.add('show');
+    <div class="overlay-header"><button class="oh-back" onclick="closeOverlay('detailOverlay')"><i class="fas fa-arrow-left"></i></button><div style="display:flex;align-items:center;gap:8px;flex:1;cursor:pointer" onclick="closeOverlay('detailOverlay');setTimeout(()=>openUserProfile(${p.av}),200)"><img src="${AV[p.av]}" style="width:32px;height:32px;border-radius:50%;object-fit:cover"><div><div style="font-size:14px;font-weight:700">${p.user}</div><div style="font-size:10px;color:var(--text-muted)">3小时前</div></div></div><button style="padding:5px 14px;border-radius:var(--radius-full);font-size:11px;font-weight:600;background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border:none;cursor:pointer" onclick="showToast('✅ 已关注')">+关注</button></div>
+    <div class="detail-photos" onclick="openImgViewer('${p.img}')"><div class="detail-photos-inner"><img src="${p.img}" alt="" style="cursor:zoom-in"></div></div>
+    <div class="detail-content"><div class="dc-title">${p.title}</div><div class="dc-tags"><span class="dc-tag" style="background:${p.tagColor};color:${p.tagText}">${p.tag}</span>${p.loc?`<span class="dc-tag" style="background:var(--bg);color:var(--text-sec)"><i class="fas fa-map-marker-alt"></i> ${p.loc}</span>`:''}</div></div>
+    <div class="detail-actions"><div class="da-item" onclick="this.classList.toggle('liked');showToast(this.classList.contains('liked')?'❤️ 已点赞':'取消点赞')"><i class="far fa-heart"></i> ${p.likes}</div><div class="da-item" onclick="showToast('💬 评论')"><i class="far fa-comment"></i> ${p.comments.length}</div><div class="da-item" onclick="this.classList.toggle('collected');showToast(this.classList.contains('collected')?'⭐ 已收藏':'取消收藏')"><i class="far fa-bookmark"></i></div><div class="da-item" style="margin-left:auto" onclick="showToast('🔗 已复制链接')"><i class="fas fa-share-alt"></i></div></div>
+    <div class="detail-comments"><div class="dc-section-title">评论 ${p.comments.length}</div>${p.comments.length?p.comments.map(c=>`<div class="comment-item"><img src="${AV[c.av]}" alt="" onclick="closeOverlay('detailOverlay');setTimeout(()=>openUserProfile(${c.av}),200)" style="cursor:pointer"><div class="ci-body"><div class="ci-name">${c.name}</div><div class="ci-text">${c.text}</div><div class="ci-meta"><span>${c.time}</span><span style="cursor:pointer">点赞</span><span style="cursor:pointer">回复</span></div></div></div>`).join(''):'<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">暂无评论，来说两句吧～</div>'}</div>
+    <div class="detail-comment-input"><input type="text" id="commentInput" placeholder="写下你的评论..."><button onclick="if(document.getElementById('commentInput').value.trim()){showToast('✅ 评论已发送');document.getElementById('commentInput').value='';}">发送</button></div>`;
+  openOverlay('detailOverlay');
 }
-function closeDetail(){document.getElementById('detailOverlay').classList.remove('show');}
-function submitComment(){const i=document.getElementById('commentInput');if(!i.value.trim())return;showToast('✅ 评论已发送');i.value='';}
 
 // ===== Image Viewer =====
-function openImgViewer(src){const v=document.getElementById('imgViewer');document.getElementById('imgViewerImg').src=src;document.getElementById('imgViewerCounter').textContent='';v.classList.add('show');}
+function openImgViewer(src){document.getElementById('imgViewerImg').src=src;document.getElementById('imgViewer').classList.add('show');}
 function closeImgViewer(){document.getElementById('imgViewer').classList.remove('show');}
+
+// ===== User Profile Page =====
+function openUserProfile(avIdx){
+  const name=UN[avIdx]||'宠物爱好者';
+  const bio=UB[avIdx]||'爱宠人士';
+  const av=AV[avIdx];
+  document.getElementById('userProfileContent').innerHTML=`
+    <div class="up-banner"><button class="up-back" onclick="closeOverlay('userProfilePage')"><i class="fas fa-arrow-left"></i></button><img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&h=280&fit=crop" alt=""></div>
+    <div class="up-card"><div class="up-avatar"><img src="${av.replace('w=60','w=120').replace('h=60','h=120')}" alt=""></div><div class="up-name">${name}</div><div class="up-bio">${bio}</div><div class="up-stats"><div class="up-stat"><div class="up-stat-val">${Math.floor(Math.random()*200+50)}</div><div class="up-stat-label">宠友</div></div><div class="up-stat"><div class="up-stat-val">${Math.floor(Math.random()*100+20)}</div><div class="up-stat-label">关注</div></div><div class="up-stat"><div class="up-stat-val">${Math.floor(Math.random()*2000+200)}</div><div class="up-stat-label">获赞</div></div><div class="up-stat"><div class="up-stat-val">${Math.floor(Math.random()*50+5)}</div><div class="up-stat-label">动态</div></div></div></div>
+    <div class="up-actions"><button class="up-btn-follow" onclick="this.textContent='已关注';this.style.background='#eee';this.style.color='var(--text-sec)';showToast('✅ 已关注')">+关注</button><button class="up-btn-msg" onclick="closeOverlay('userProfilePage');openPrivateChat(${avIdx},'${name}')">发私信</button></div>
+    <div class="up-section"><h4>🐾 TA的宠物</h4><div class="up-pets"><div class="up-pet"><span class="up-pet-icon">🐱</span><div><div class="up-pet-name">小猫咪</div><div class="up-pet-breed">英短·2岁</div></div></div><div class="up-pet"><span class="up-pet-icon">🐶</span><div><div class="up-pet-name">小狗狗</div><div class="up-pet-breed">柯基·3岁</div></div></div></div></div>
+    <div class="up-section"><h4>📝 TA的动态</h4>${posts.filter(p=>p.av===avIdx).map(p=>`<div class="sub-list-item" onclick="closeOverlay('userProfilePage');setTimeout(()=>openDetail(${p.id}),200)"><div style="width:50px;height:50px;border-radius:var(--radius-sm);overflow:hidden;flex-shrink:0"><img src="${p.img}" style="width:100%;height:100%;object-fit:cover"></div><div class="sli-info"><div class="sli-title" style="font-size:13px">${p.title.slice(0,20)}${p.title.length>20?'...':''}</div><div class="sli-desc">❤️ ${p.likes} · 💬 ${p.comments.length}</div></div></div>`).join('')||'<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px">暂无动态</div>'}</div>`;
+  openOverlay('userProfilePage');
+}
+
+// ===== Private Chat =====
+function openPrivateChat(avIdx,name){
+  const av=AV[avIdx];
+  document.getElementById('privateChatContent').innerHTML=`
+    <div class="overlay-header"><button class="oh-back" onclick="closeOverlay('privateChatPage')"><i class="fas fa-arrow-left"></i></button><img src="${av}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;cursor:pointer" onclick="closeOverlay('privateChatPage');openUserProfile(${avIdx})"><div class="oh-title">${name}</div></div>
+    <div class="chat-messages" id="pmMessages"><div class="msg-row ai"><div class="mr-avatar"><img src="${av.replace('w=60','w=60')}" alt=""></div><div class="mr-bubble">你好呀！看到你也养宠物，好开心～ 🐾</div></div></div>
+    <div class="chat-input-bar"><input type="text" placeholder="发送消息..." id="pmInput" onkeypress="if(event.key==='Enter')sendPmMsg(${avIdx})"><button class="ci-send" onclick="sendPmMsg(${avIdx})"><i class="fas fa-paper-plane"></i></button></div>`;
+  openOverlay('privateChatPage');
+}
+function sendPmMsg(avIdx){
+  const input=document.getElementById('pmInput'),msg=input.value.trim();if(!msg)return;
+  const msgs=document.getElementById('pmMessages');
+  const ud=document.createElement('div');ud.className='msg-row user';ud.innerHTML=`<div class="mr-bubble">${msg}</div>`;msgs.appendChild(ud);input.value='';msgs.scrollTop=msgs.scrollHeight;
+  setTimeout(()=>{const ad=document.createElement('div');ad.className='msg-row ai';ad.innerHTML=`<div class="mr-avatar"><img src="${AV[avIdx]}" alt=""></div><div class="mr-bubble">${['哈哈是的！','我家宝贝也是这样呢～','下次一起遛宠物呀！','你家的好可爱！','改天约着一起玩？'][Math.floor(Math.random()*5)]}</div>`;msgs.appendChild(ad);msgs.scrollTop=msgs.scrollHeight;},1000);
+}
+
+// ===== AI Chat =====
+const aiResponses=['根据您的描述，可能存在毛球堵塞或饮食性便秘。<br><br>建议：<br>1. 增加饮水量<br>2. 喂食猫草帮助排毛球<br>3. 如24h无排便建议就医','综合判断：<br><br>🔴 风险等级：中等<br>📋 可能原因：毛球堵塞 / 饮食变化<br><br>需要我帮您预约附近医院吗？'];
+let chatStep=0;
+function sendChatMsg(){const input=document.getElementById('chatInput'),msg=input.value.trim();if(!msg)return;const msgs=document.getElementById('chatMessages');const ud=document.createElement('div');ud.className='msg user float-up';ud.innerHTML=`<div class="msg-avatar">👤</div><div class="msg-bubble">${msg}</div>`;msgs.appendChild(ud);input.value='';msgs.scrollTop=msgs.scrollHeight;setTimeout(()=>{const ad=document.createElement('div');ad.className='msg ai float-up';ad.innerHTML=`<div class="msg-avatar">🤖</div><div class="msg-bubble">${chatStep<aiResponses.length?aiResponses[chatStep]:'如需更多帮助，可以随时咨询 🐾'}</div>`;msgs.appendChild(ad);msgs.scrollTop=msgs.scrollHeight;chatStep++;},1500);}
+
+// ===== Sub Pages =====
+const subPageData={
+  collection:{title:'我的收藏',items:[{icon:'❤️',bg:'var(--primary-light)',title:'自制猫饭食谱分享',desc:'宠物营养师 · 678赞'},{icon:'📋',bg:'var(--green-light)',title:'猫三联疫苗接种全攻略',desc:'养猫指南 · 1.2k赞'},{icon:'🐕',bg:'var(--secondary-light)',title:'柯基短腿日常',desc:'柯基控 · 562赞'}]},
+  records:{title:'健康记录',items:[{icon:'🍖',bg:'var(--primary-light)',title:'喂食记录',desc:'今日2次 · 正常'},{icon:'💩',bg:'var(--secondary-light)',title:'排便记录',desc:'今日0次 · ⚠️异常'},{icon:'⚖️',bg:'var(--blue-light)',title:'体重记录',desc:'4.2kg · 正常范围'},{icon:'💊',bg:'var(--green-light)',title:'驱虫提醒',desc:'即将到期 · 3月15日'}]},
+  achievements:{title:'我的成就',items:[{icon:'🏆',bg:'var(--accent-dark)',title:'养宠达人',desc:'连续记录30天'},{icon:'📸',bg:'var(--purple-light)',title:'分享达人',desc:'发布10篇动态'},{icon:'🤝',bg:'var(--green-light)',title:'社交达人',desc:'添加50位宠友'},{icon:'🧠',bg:'var(--blue-light)',title:'AI先锋',desc:'完成5次AI扫描'}]},
+  orders:{title:'我的订单',items:[{icon:'🌾',bg:'var(--primary-light)',title:'低敏无谷猫粮 2kg',desc:'已发货 · ¥168'},{icon:'💊',bg:'var(--secondary-light)',title:'体内驱虫药 3片装',desc:'已完成 · ¥89'},{icon:'👁️',bg:'var(--blue-light)',title:'泪痕清洁液',desc:'待收货 · ¥45'}]},
+  vip:{title:'爪印会员',items:[{icon:'🔬',bg:'var(--primary-light)',title:'无限AI扫描',desc:'每月无限次视觉识别'},{icon:'🤖',bg:'var(--purple-light)',title:'专属兽医',desc:'真人兽医优先回复'},{icon:'💰',bg:'var(--green-light)',title:'商城折扣',desc:'全场88折起'},{icon:'🛡️',bg:'var(--blue-light)',title:'保险优惠',desc:'宠物医保专属费率'}]},
+  hospital:{title:'附近医院',items:[{icon:'🏥',bg:'var(--red-light)',title:'瑞鹏宠物医院（朝阳店）',desc:'⭐4.8 · 24h急诊 · ¥80起'},{icon:'🏥',bg:'var(--secondary-light)',title:'芭比堂动物医院',desc:'⭐4.6 · 营业至22:00 · ¥60起'},{icon:'🏥',bg:'var(--blue-light)',title:'美联众合动物医院',desc:'⭐4.9 · 24h急诊 · ¥120起'}]},
+  insurance:{title:'宠物医保',items:[{icon:'🛡️',bg:'var(--green-light)',title:'基础版 · ¥199/年',desc:'意外伤害 · 门诊报销30%'},{icon:'🛡️',bg:'var(--blue-light)',title:'进阶版 · ¥399/年',desc:'含手术 · 门诊报销60%'},{icon:'🛡️',bg:'var(--purple-light)',title:'尊享版 · ¥699/年',desc:'全病种 · 门诊报销80%'},{icon:'📋',bg:'var(--primary-light)',title:'一键生成健康报告',desc:'基于AI精算 · 快速核保'}]},
+  gene:{title:'基因保存',items:[{icon:'🧬',bg:'var(--purple-light)',title:'基础基因保存',desc:'¥4,999 · 永久保存'},{icon:'🧬',bg:'var(--primary-light)',title:'完整基因保存+克隆',desc:'¥19,999 · 含克隆优先权'},{icon:'📞',bg:'var(--blue-light)',title:'咨询顾问',desc:'一对一专业解答'}]},
+  settings:{title:'设置',items:[{icon:'👤',bg:'var(--primary-light)',title:'个人资料',desc:'修改头像、昵称、简介'},{icon:'🔒',bg:'var(--blue-light)',title:'隐私设置',desc:'谁可以看我的动态'},{icon:'🔔',bg:'var(--yellow-light)',title:'通知设置',desc:'推送提醒管理'},{icon:'🗑️',bg:'var(--red-light)',title:'清除缓存',desc:'当前缓存 12.3MB'},{icon:'📝',bg:'var(--bg)',title:'用户协议',desc:''},{icon:'ℹ️',bg:'var(--bg)',title:'关于爪印宠友圈',desc:'v1.0.0'}]},
+  help:{title:'联系客服',items:[{icon:'💬',bg:'var(--green-light)',title:'在线客服',desc:'平均响应3分钟'},{icon:'📞',bg:'var(--blue-light)',title:'电话客服',desc:'400-888-PETS'},{icon:'📧',bg:'var(--purple-light)',title:'邮件反馈',desc:'support@zhuayin.com'},{icon:'❓',bg:'var(--yellow-light)',title:'常见问题',desc:'查看FAQ'}]},
+};
+function openSubPage(key){
+  const d=subPageData[key];if(!d){showToast('功能开发中');return;}
+  document.getElementById('subPageContent').innerHTML=`
+    <div class="overlay-header"><button class="oh-back" onclick="closeOverlay('subPage')"><i class="fas fa-arrow-left"></i></button><div class="oh-title">${d.title}</div></div>
+    <div class="overlay-body">${d.items.map(it=>`<div class="sub-list-item" onclick="showToast('${it.title}')"><div class="sli-icon" style="background:${it.bg}">${it.icon}</div><div class="sli-info"><div class="sli-title">${it.title}</div>${it.desc?`<div class="sli-desc">${it.desc}</div>`:''}</div><i class="fas fa-chevron-right sli-arrow"></i></div>`).join('')}</div>`;
+  openOverlay('subPage');
+}
 
 // ===== Publish =====
 let pubPhotos=[];
@@ -576,28 +676,125 @@ function closeApiKeyModal(){document.getElementById('apiKeyModal').classList.rem
 async function verifyAndSaveApiKey(){const key=document.getElementById('apiKeyInput').value.trim(),st=document.getElementById('apiKeyStatus'),btn=document.getElementById('apiKeyVerifyBtn');if(!key){st.textContent='❌ 请输入 API Key';st.style.color='var(--red)';return;}btn.disabled=true;btn.style.opacity='.5';st.textContent='🔄 验证中...';st.style.color='var(--text-muted)';try{const r=await fetch('/api/verify-key',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({api_key:key})});const d=await r.json();if(d.valid){apiKey=key;localStorage.setItem('bailian_api_key',key);updateApiKeyUI();st.textContent='✅ 验证成功！';st.style.color='var(--green)';setTimeout(()=>closeApiKeyModal(),1000);showToast('✅ 百炼连接成功！');}else{st.textContent='❌ '+(d.error||'无效Key');st.style.color='var(--red)';}}catch(e){st.textContent='❌ 网络错误';st.style.color='var(--red)';}btn.disabled=false;btn.style.opacity='1';}
 
 // ===== AI Scan =====
-function selectScanType(type,el){currentScanType=type;document.querySelectorAll('.scan-option').forEach(o=>o.classList.remove('selected'));if(el)el.classList.add('selected');document.getElementById('scanUploadArea').style.display='block';document.getElementById('scanSubmitWrap').style.display='block';document.getElementById('scanAnalyzing').style.display='none';document.getElementById('scanStreamResult').style.display='none';document.getElementById('aiPageRest').style.display='none';resetScanImage();}
-function resetScanImage(){scanImageBase64='';scanImageMime='';const p=document.getElementById('scanPreview'),ph=document.getElementById('scanPlaceholder');const img=p.querySelector('img');if(img)img.remove();ph.style.display='flex';document.getElementById('scanSubmitBtn').disabled=true;document.getElementById('scanSubmitBtn').style.opacity='.5';}
+function selectScanType(type,el){currentScanType=type;document.querySelectorAll('.scan-option').forEach(o=>o.classList.remove('selected'));if(el)el.classList.add('selected');document.getElementById('scanUploadArea').style.display='block';updateScanBtn();}
+function resetScanImage(){scanImageBase64='';scanImageMime='';const p=document.getElementById('scanPreview'),ph=document.getElementById('scanPlaceholder');const img=p.querySelector('img');if(img)img.remove();ph.style.display='flex';}
 function triggerScanUpload(){document.getElementById('scanFileInput').click();}
 function triggerScanCamera(){document.getElementById('scanCameraInput').click();}
-function handleScanFile(input){const file=input.files[0];if(!file)return;if(!file.type.startsWith('image/')){showToast('❌ 请选择图片');return;}scanImageMime=file.type;const reader=new FileReader();reader.onload=e=>{const url=e.target.result;scanImageBase64=url.split(',')[1];const p=document.getElementById('scanPreview'),ph=document.getElementById('scanPlaceholder');ph.style.display='none';let img=p.querySelector('img');if(!img){img=document.createElement('img');p.insertBefore(img,ph);}img.src=url;img.style.cssText='width:100%;height:180px;object-fit:cover;display:block;border-radius:16px 16px 0 0';document.getElementById('scanSubmitBtn').disabled=false;document.getElementById('scanSubmitBtn').style.opacity='1';};reader.readAsDataURL(file);input.value='';}
-async function submitAIScan(){if(!apiKey){showToast('❌ 请先设置 API Key');openApiKeyModal();return;}if(!scanImageBase64||!currentScanType){showToast('❌ 请上传照片并选择类型');return;}document.getElementById('scanUploadArea').style.display='none';document.getElementById('scanSubmitWrap').style.display='none';document.getElementById('scanAnalyzing').style.display='block';document.getElementById('scanStreamResult').style.display='none';document.getElementById('aiPageRest').style.display='none';document.getElementById('scanStreamPreview').textContent='';try{const r=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({api_key:apiKey,image_base64:scanImageBase64,scan_type:currentScanType,mime_type:scanImageMime})});const reader=r.body.getReader(),decoder=new TextDecoder();let full='';const preview=document.getElementById('scanStreamPreview');while(true){const{done,value}=await reader.read();if(done)break;const chunk=decoder.decode(value,{stream:true});const lines=chunk.split('\n');for(const line of lines){if(!line.startsWith('data: '))continue;const d=line.slice(6);if(d.trim()==='[DONE]')continue;try{const p=JSON.parse(d);if(p.error){showToast('❌ '+p.error);resetScan();return;}if(p.content){full+=p.content;preview.textContent=full;preview.scrollTop=preview.scrollHeight;}}catch(e){}}}document.getElementById('scanAnalyzing').style.display='none';document.getElementById('scanStreamResult').style.display='block';document.getElementById('ssrContent').innerHTML=full.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');}catch(e){showToast('❌ 请求失败');resetScan();}}
-function resetScan(){document.getElementById('scanUploadArea').style.display='none';document.getElementById('scanSubmitWrap').style.display='none';document.getElementById('scanAnalyzing').style.display='none';document.getElementById('scanStreamResult').style.display='none';document.getElementById('aiPageRest').style.display='block';document.querySelectorAll('.scan-option').forEach(o=>o.classList.remove('selected'));currentScanType='';resetScanImage();}
+function handleScanFile(input){const file=input.files[0];if(!file)return;if(!file.type.startsWith('image/')){showToast('❌ 请选择图片');return;}scanImageMime=file.type;const reader=new FileReader();reader.onload=e=>{const url=e.target.result;scanImageBase64=url.split(',')[1];const p=document.getElementById('scanPreview'),ph=document.getElementById('scanPlaceholder');ph.style.display='none';let img=p.querySelector('img');if(!img){img=document.createElement('img');p.insertBefore(img,ph);}img.src=url;img.style.cssText='width:100%;height:180px;object-fit:cover;display:block';updateScanBtn();showToast('✅ 照片已上传');};reader.readAsDataURL(file);input.value='';}
+async function submitAIScan(){
+  if(!apiKey){showToast('❌ 请先设置 API Key');openApiKeyModal();return;}
+  if(!scanImageBase64||!currentScanType){showToast('❌ 请上传照片并选择类型');return;}
 
-// ===== AI Chat =====
-const aiResponses=['根据您的描述，可能存在毛球堵塞或饮食性便秘。<br><br>建议：<br>1. 增加饮水量<br>2. 喂食猫草帮助排毛球<br>3. 如24h无排便建议就医','综合判断：<br><br>🔴 风险等级：中等<br>📋 可能原因：毛球堵塞 / 饮食变化<br><br>需要我帮您预约附近医院吗？'];
-let chatStep=0;
-function openAIChat(){document.getElementById('aiChat').classList.add('show');chatStep=0;}
-function closeAIChat(){document.getElementById('aiChat').classList.remove('show');}
-function sendChatMsg(){const input=document.getElementById('chatInput'),msg=input.value.trim();if(!msg)return;const msgs=document.getElementById('chatMessages');const ud=document.createElement('div');ud.className='msg user float-up';ud.innerHTML=`<div class="msg-avatar">👤</div><div class="msg-bubble">${msg}</div>`;msgs.appendChild(ud);input.value='';const td=document.createElement('div');td.className='msg ai float-up';td.id='typing-indicator';td.innerHTML=`<div class="msg-avatar">🤖</div><div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;msgs.appendChild(td);msgs.scrollTop=msgs.scrollHeight;setTimeout(()=>{const t=document.getElementById('typing-indicator');if(t)t.remove();const ad=document.createElement('div');ad.className='msg ai float-up';ad.innerHTML=`<div class="msg-avatar">🤖</div><div class="msg-bubble">${chatStep<aiResponses.length?aiResponses[chatStep]:'如需更多帮助，可以随时咨询 🐾'}</div>`;msgs.appendChild(ad);msgs.scrollTop=msgs.scrollHeight;chatStep++;},1500);}
+  const btn=document.getElementById('scanSubmitBtn');
+  const analyzing=document.getElementById('scanAnalyzing');
+  const streamPreview=document.getElementById('scanStreamPreview');
+  const resultBox=document.getElementById('scanStreamResult');
+  const ssrContent=document.getElementById('ssrContent');
+  const aiRest=document.getElementById('aiPageRest');
+
+  btn.disabled=true;btn.style.opacity='.5';
+  btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> 分析中...';
+  analyzing.style.display='block';
+  streamPreview.innerHTML='';
+  resultBox.style.display='none';
+  if(aiRest)aiRest.style.display='none';
+
+  showToast('🧠 AI正在分析，请稍候...');
+
+  let full='';
+  try{
+    const r=await fetch('/api/scan',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({api_key:apiKey,image_base64:scanImageBase64,scan_type:currentScanType,mime_type:scanImageMime||'image/jpeg'})
+    });
+
+    if(!r.ok){
+      let errMsg='请求失败: '+r.status;
+      try{const t=await r.text();if(t)errMsg=t;}catch(e){}
+      showToast('❌ '+errMsg);
+      resetScanUI();return;
+    }
+
+    // Read SSE stream
+    const reader=r.body.getReader();
+    const decoder=new TextDecoder();
+    let buf='';
+
+    while(true){
+      const{done,value}=await reader.read();
+      if(done)break;
+      const chunk=decoder.decode(value,{stream:true});
+      buf+=chunk;
+
+      // Process complete SSE lines
+      const lines=buf.split('\n');
+      buf=lines.pop(); // keep incomplete line in buffer
+
+      for(const line of lines){
+        if(!line.startsWith('data: '))continue;
+        const d=line.slice(6).trim();
+        if(d==='[DONE]')continue;
+        try{
+          const p=JSON.parse(d);
+          if(p.error){
+            showToast('❌ '+p.error);
+            resetScanUI();return;
+          }
+          if(p.content){
+            full+=p.content;
+            // Real-time preview
+            streamPreview.innerHTML=full.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+            streamPreview.scrollTop=streamPreview.scrollHeight;
+          }
+        }catch(e){}
+      }
+    }
+
+    // Process any remaining buffer
+    if(buf.trim().startsWith('data: ')){
+      const d=buf.trim().slice(6);
+      if(d!=='[DONE]'){
+        try{const p=JSON.parse(d);if(p.error){showToast('❌ '+p.error);resetScanUI();return;}if(p.content)full+=p.content;}catch(e){}
+      }
+    }
+
+    if(!full.trim()){showToast('❌ AI未返回有效结果');resetScanUI();return;}
+
+    // Show final result
+    analyzing.style.display='none';
+    resultBox.style.display='block';
+    const typeNames={skin:'皮肤',eye:'眼睛',gum:'牙龈',poop:'便便'};
+    ssrContent.innerHTML=full.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+
+  }catch(e){
+    showToast('❌ 请求异常: '+e.message);
+    console.error('AI scan error:',e);
+  }
+  resetScanUI();
+
+  function resetScanUI(){
+    btn.disabled=false;btn.style.opacity='1';btn.innerHTML='<i class="fas fa-brain"></i> 开始 AI 分析';
+    analyzing.style.display='none';
+    if(aiRest)aiRest.style.display='block';
+  }
+}
+function updateScanBtn(){const btn=document.getElementById('scanSubmitBtn');const ready=scanImageBase64&&currentScanType;btn.disabled=!ready;btn.style.opacity=ready?'1':'.5';}
+function resetScan(){resetScanImage();updateScanBtn();document.getElementById('scanStreamResult').style.display='none';document.getElementById('scanAnalyzing').style.display='none';const aiRest=document.getElementById('aiPageRest');if(aiRest)aiRest.style.display='block';}
 
 // ===== Modal Close =====
 document.getElementById('recordModal').addEventListener('click',function(e){if(e.target===this)closeRecordModal();});
 document.getElementById('apiKeyModal').addEventListener('click',function(e){if(e.target===this)closeApiKeyModal();});
-document.getElementById('detailOverlay').addEventListener('click',function(e){if(e.target===this)closeDetail();});
-document.body.addEventListener('touchmove',function(e){if(e.target.closest('.page')||e.target.closest('.chat-messages')||e.target.closest('.detail-inner'))return;e.preventDefault();},{passive:false});
+document.body.addEventListener('touchmove',function(e){if(e.target.closest('.page')||e.target.closest('.overlay-body')||e.target.closest('.chat-messages'))return;e.preventDefault();},{passive:false});
 
-document.addEventListener('DOMContentLoaded',()=>{renderWaterfall();updateApiKeyUI();document.getElementById('recordTime').value=new Date().toISOString().slice(0,16);});
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded',()=>{
+  renderWaterfall();updateApiKeyUI();
+  document.getElementById('recordTime').value=new Date().toISOString().slice(0,16);
+  // Bug #3 fix: default select skin scan
+  currentScanType='skin';
+  document.getElementById('scanUploadArea').style.display='block';
+});
 </script>
 </body>
 </html>
