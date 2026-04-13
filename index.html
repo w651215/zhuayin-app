@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>爪印宠友圈</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<style>
+:root{--primary:#FF6B6B;--primary-light:#FFE0E0;--secondary:#4ECDC4;--secondary-light:#E0F7F5;--accent:#FFE66D;--accent-dark:#F5D432;--bg:#F8F9FE;--card:#FFFFFF;--text:#2D3436;--text-sec:#636E72;--text-muted:#B2BEC3;--border:#F0F0F5;--shadow:0 2px 16px rgba(0,0,0,.06);--shadow-lg:0 8px 32px rgba(0,0,0,.1);--radius:16px;--radius-sm:10px;--radius-full:50px;--safe-bottom:env(safe-area-inset-bottom,0px);--green:#00B894;--green-light:#E0FFF5;--yellow:#FDCB6E;--yellow-light:#FFF9E6;--red:#FF6B6B;--red-light:#FFE0E0;--blue:#74B9FF;--blue-light:#EBF5FF;--purple:#A29BFE;--purple-light:#F0EEFF;--orange:#E17055;--orange-light:#FFECD2}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh;width:100vw}
+.app{width:100%;max-width:430px;height:100vh;margin:0 auto;position:relative;overflow:hidden;background:var(--bg)}
+.page{position:absolute;top:0;left:0;width:100%;height:100%;padding-bottom:calc(68px + var(--safe-bottom));overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;opacity:0;transform:translateY(16px);pointer-events:none;transition:all .35s cubic-bezier(.4,0,.2,1)}
+.page.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.page::-webkit-scrollbar{display:none}
+
+/* ===== Bottom Nav ===== */
+.bottom-nav{position:absolute;bottom:0;left:0;width:100%;height:calc(68px + var(--safe-bottom));padding-bottom:var(--safe-bottom);background:rgba(255,255,255,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;align-items:center;justify-content:space-around;border-top:.5px solid rgba(0,0,0,.06);z-index:100}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:6px 16px;border-radius:12px;transition:all .3s;position:relative}
+.nav-item i{font-size:22px;color:var(--text-muted);transition:all .3s}
+.nav-item span{font-size:10px;color:var(--text-muted);font-weight:500;transition:all .3s}
+.nav-item.active i{color:var(--primary)}.nav-item.active span{color:var(--primary);font-weight:700}
+.nav-item.center-btn{margin-top:-22px;background:linear-gradient(135deg,var(--primary),#FF8E8E);width:52px;height:52px;border-radius:50%;padding:0;justify-content:center;gap:0;box-shadow:0 4px 20px rgba(255,107,107,.45)}
+.nav-item.center-btn i{color:#fff;font-size:22px}.nav-item.center-btn span{display:none}
+.nav-item .nav-dot{position:absolute;top:4px;right:10px;width:6px;height:6px;background:var(--red);border-radius:50%}
+
+/* ===== Sticky Header + Tabs ===== */
+.sticky-top{position:sticky;top:0;z-index:50;background:rgba(248,249,254,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.header{padding:14px 20px 10px;display:flex;align-items:center;justify-content:space-between}
+.header-title{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--primary),#FF8E8E);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.header-icon{width:38px;height:38px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s}
+.header-icon:active{transform:scale(.9)}.header-icon i{color:var(--text);font-size:15px}
+.community-tabs{display:flex;padding:0 20px;gap:0;border-bottom:1px solid var(--border)}
+.community-tab{padding:8px 14px;font-size:14px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .3s;white-space:nowrap}
+.community-tab.active{color:var(--text);font-weight:700;border-bottom-color:var(--primary)}
+
+/* ===== Common ===== */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:var(--radius-full);font-size:11px;font-weight:600}
+.badge-green{background:var(--green-light);color:var(--green)}.badge-yellow{background:var(--yellow-light);color:var(--orange)}.badge-red{background:var(--red-light);color:var(--red)}.badge-blue{background:var(--blue-light);color:#0984E3}.badge-purple{background:var(--purple-light);color:#6C5CE7}.badge-orange{background:var(--orange-light);color:var(--orange)}
+.toast{position:fixed;top:60px;left:50%;transform:translateX(-50%) translateY(-100px);background:rgba(45,52,54,.92);color:#fff;padding:12px 24px;border-radius:var(--radius-full);font-size:14px;font-weight:500;z-index:999;transition:transform .4s cubic-bezier(.4,0,.2,1);white-space:nowrap;backdrop-filter:blur(8px)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.float-up{animation:floatUp .5s ease-out}
+@keyframes floatUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+::-webkit-scrollbar{width:0;height:0}
+
+/* ===== Waterfall ===== */
+.waterfall{column-count:2;column-gap:10px;padding:10px 12px 20px}
+.wf-card{break-inside:avoid;margin-bottom:10px;background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s;animation:floatUp .5s ease-out both}
+.wf-card:active{transform:scale(.97)}
+.wf-card .wf-img{width:100%;display:block;position:relative;overflow:hidden}
+.wf-card .wf-img img{width:100%;display:block}
+.wf-card .wf-body{padding:10px 12px 12px}
+.wf-card .wf-title{font-size:13px;font-weight:600;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.wf-card .wf-footer{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.wf-card .wf-user{display:flex;align-items:center;gap:6px}
+.wf-card .wf-user img{width:22px;height:22px;border-radius:50%;object-fit:cover}
+.wf-card .wf-uname{font-size:11px;color:var(--text-sec);max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wf-card .wf-likes{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--text-muted)}
+.wf-card .wf-likes i{font-size:12px}
+.wf-card .wf-likes.liked i{color:var(--red)}.wf-card .wf-likes.liked{color:var(--red)}
+.wf-card .wf-tag{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:500}
+.wf-card .wf-location{font-size:10px;color:var(--text-muted);margin-top:4px;display:flex;align-items:center;gap:3px}
+
+/* ===== Detail Page ===== */
+.detail-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:250;opacity:0;pointer-events:none;transition:opacity .3s}
+.detail-overlay.show{opacity:1;pointer-events:auto}
+.detail-inner{width:100%;max-width:430px;height:100%;margin:0 auto;overflow-y:auto;background:var(--bg);display:flex;flex-direction:column}
+.detail-header{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0}
+.detail-header .dh-back{width:34px;height:34px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:13px}
+.detail-header .dh-user{display:flex;align-items:center;gap:8px;flex:1}
+.detail-header .dh-user img{width:32px;height:32px;border-radius:50%;object-fit:cover}
+.detail-header .dh-name{font-size:14px;font-weight:700}
+.detail-header .dh-time{font-size:10px;color:var(--text-muted)}
+.detail-header .dh-follow{padding:5px 14px;border-radius:var(--radius-full);font-size:11px;font-weight:600;background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border:none;cursor:pointer}
+.detail-photos{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;background:#000}
+.detail-photos::-webkit-scrollbar{display:none}
+.detail-photos-inner{display:flex;width:max-content}
+.detail-photos-inner img{width:100vw;max-width:430px;height:360px;object-fit:cover;flex-shrink:0}
+.detail-photo-dots{display:flex;justify-content:center;gap:5px;padding:8px 0;background:#000}
+.detail-photo-dots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3)}
+.detail-photo-dots span.active{background:#fff}
+.detail-content{padding:16px 18px;flex:1}
+.detail-content .dc-title{font-size:16px;font-weight:700;line-height:1.5;margin-bottom:10px}
+.detail-content .dc-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.detail-content .dc-tag{padding:3px 10px;border-radius:var(--radius-full);font-size:11px;font-weight:500}
+.detail-actions{display:flex;align-items:center;gap:20px;padding:12px 18px;border-top:1px solid var(--border);background:var(--card);flex-shrink:0}
+.detail-actions .da-item{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--text-sec);cursor:pointer}
+.detail-actions .da-item i{font-size:18px}
+.detail-actions .da-item.liked i{color:var(--red)}
+.detail-actions .da-item.collected i{color:var(--yellow)}
+.detail-comments{padding:0 18px 20px;margin-top:4px}
+.detail-comments .dc-section-title{font-size:14px;font-weight:700;margin-bottom:12px}
+.comment-item{display:flex;gap:10px;margin-bottom:14px}
+.comment-item img{width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0}
+.comment-item .ci-body{flex:1}
+.comment-item .ci-name{font-size:12px;font-weight:600;color:var(--primary)}
+.comment-item .ci-text{font-size:13px;line-height:1.5;margin-top:2px}
+.comment-item .ci-meta{font-size:10px;color:var(--text-muted);margin-top:3px;display:flex;gap:12px}
+.detail-comment-input{display:flex;gap:8px;align-items:center;padding:10px 16px calc(10px + var(--safe-bottom));background:var(--card);border-top:1px solid var(--border);flex-shrink:0}
+.detail-comment-input input{flex:1;padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius-full);font-size:13px;font-family:inherit;outline:none;background:var(--bg)}
+.detail-comment-input input:focus{border-color:var(--primary)}
+.detail-comment-input button{padding:8px 16px;border-radius:var(--radius-full);font-size:12px;font-weight:600;background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border:none;cursor:pointer;font-family:inherit}
+
+/* ===== Image Viewer ===== */
+.img-viewer{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);z-index:400;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;cursor:zoom-out}
+.img-viewer.show{opacity:1;pointer-events:auto}
+.img-viewer img{max-width:100%;max-height:90vh;object-fit:contain}
+.img-viewer .iv-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px}
+.img-viewer .iv-counter{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.7);font-size:13px}
+
+/* ===== AI Scan - Dog Style ===== */
+.scan-hero{text-align:center;padding:24px 20px 16px}
+.scan-dog-wrap{position:relative;width:160px;height:160px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center}
+.scan-dog-body{font-size:80px;position:relative;z-index:1;filter:drop-shadow(0 4px 12px rgba(0,0,0,.1))}
+.scan-ring-anim{position:absolute;width:90px;height:90px;border-radius:50%;border:3px dashed var(--primary);opacity:.6;animation:scanRotate 4s linear infinite}
+@keyframes scanRotate{to{transform:rotate(360deg)}}
+.scan-beam{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:40px;height:60px;background:linear-gradient(180deg,rgba(255,107,107,.35),transparent);clip-path:polygon(30% 0%,70% 0%,100% 100%,0% 100%);animation:scanPulse 2s ease-in-out infinite;z-index:2}
+@keyframes scanPulse{0%,100%{opacity:.5;height:60px}50%{opacity:1;height:80px}}
+.scan-dog-wrap .scan-sparkles{position:absolute;font-size:14px;animation:sparkle 1.5s ease-in-out infinite}
+.scan-dog-wrap .scan-sparkles:nth-child(4){top:15px;right:20px;animation-delay:.3s}
+.scan-dog-wrap .scan-sparkles:nth-child(5){top:50px;left:15px;animation-delay:.6s}
+.scan-dog-wrap .scan-sparkles:nth-child(6){bottom:30px;right:25px;animation-delay:.9s}
+@keyframes sparkle{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+.scan-hero h2{font-size:18px;font-weight:700;margin-bottom:4px}.scan-hero p{font-size:12px;color:var(--text-sec)}
+
+.scan-options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 20px;margin-bottom:16px}
+.scan-option{background:var(--card);border-radius:var(--radius);padding:16px 12px;text-align:center;box-shadow:var(--shadow);cursor:pointer;transition:all .3s;border:2px solid transparent}
+.scan-option:active{transform:scale(.96)}.scan-option .so-icon{width:44px;height:44px;border-radius:14px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.scan-option .so-title{font-size:13px;font-weight:700;margin-bottom:2px}.scan-option .so-desc{font-size:10px;color:var(--text-muted)}
+.scan-option.selected{border-color:var(--primary);background:var(--primary-light)}
+
+.api-key-banner{margin:0 20px 12px;padding:10px 14px;border-radius:var(--radius-sm);display:flex;align-items:center;gap:10px;cursor:pointer;transition:transform .2s}
+.api-key-banner:active{transform:scale(.98)}
+.api-key-banner.connected{background:var(--green-light);border:1px solid rgba(0,184,148,.15)}
+.api-key-banner.disconnected{background:var(--yellow-light);border:1px solid rgba(253,203,110,.2)}
+.api-key-banner .akb-icon{font-size:16px}.api-key-banner .akb-info{flex:1}.api-key-banner .akb-title{font-size:12px;font-weight:700}.api-key-banner .akb-desc{font-size:10px;color:var(--text-sec);margin-top:1px}
+.api-key-banner.connected .akb-title{color:var(--green)}.api-key-banner.disconnected .akb-title{color:var(--orange)}
+
+.scan-upload-area{margin:0 20px 16px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:none}
+.scan-upload-preview{width:100%;min-height:160px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden}
+.scan-upload-preview img{width:100%;height:180px;object-fit:cover;display:block}
+.scan-upload-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:30px 20px;color:var(--text-muted)}
+.scan-upload-placeholder i{font-size:40px;color:var(--primary-light)}.scan-upload-placeholder span{font-size:13px;font-weight:500}.scan-upload-placeholder .sub{font-size:11px}
+.scan-upload-actions{padding:10px 12px;display:flex;gap:8px}
+.scan-upload-actions button{flex:1;padding:10px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:transform .2s}
+.scan-upload-actions button:active{transform:scale(.97)}
+.scan-upload-actions .btn-camera{background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff}
+.scan-upload-actions .btn-album{background:var(--bg);color:var(--text-sec);border:1.5px solid var(--border)!important}
+.scan-submit-wrap{padding:0 20px;display:none}
+.scan-analyzing{text-align:center;padding:24px 20px;display:none}
+.scan-analyzing .sa-spinner{width:48px;height:48px;border:3.5px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
+.scan-analyzing .sa-text{font-size:14px;font-weight:600}.scan-analyzing .sa-sub{font-size:11px;color:var(--text-muted);margin-top:3px}
+.scan-stream-preview{margin-top:14px;text-align:left;background:var(--card);border-radius:var(--radius);padding:14px;font-size:12px;line-height:1.8;color:var(--text-sec);max-height:280px;overflow-y:auto;white-space:pre-wrap;box-shadow:var(--shadow)}
+.scan-stream-result{padding:0 20px 20px;display:none}
+.ssr-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ssr-header .ssr-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.ssr-body{background:var(--card);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);font-size:12px;line-height:1.8;color:var(--text-sec);white-space:pre-wrap;word-break:break-word}
+.ssr-body strong{color:var(--text)}
+.ssr-actions{display:flex;gap:8px;margin-top:12px}
+.ssr-actions button{flex:1;padding:11px;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:transform .2s}
+.ssr-actions button:active{transform:scale(.97)}
+.ai-consult-card{background:linear-gradient(135deg,#667eea,#764ba2);border-radius:var(--radius);padding:16px;margin:0 20px 12px;color:#fff;display:flex;align-items:center;gap:14px;cursor:pointer;box-shadow:0 4px 20px rgba(102,126,234,.25)}
+.ai-consult-card .acc-icon{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:20px}
+.ai-consult-card .acc-info{flex:1}.ai-consult-card .acc-title{font-size:14px;font-weight:700}.ai-consult-card .acc-desc{font-size:11px;opacity:.8;margin-top:1px}
+.ai-consult-card .acc-btn{padding:7px 14px;background:rgba(255,255,255,.2);border-radius:var(--radius-full);font-size:11px;font-weight:600;white-space:nowrap}
+
+/* ===== Social Page ===== */
+.social-profile-card{margin:0 20px 16px;background:linear-gradient(135deg,#FFF5F5,#FFEEF0);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden}
+.social-profile-card::after{content:'🐾';position:absolute;right:16px;bottom:-8px;font-size:52px;opacity:.1}
+.social-profile-card .sp-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.social-profile-card .sp-avatar{width:60px;height:60px;border-radius:50%;overflow:hidden;border:3px solid #fff;box-shadow:0 4px 12px rgba(255,107,107,.25)}
+.social-profile-card .sp-avatar img{width:100%;height:100%;object-fit:cover}
+.social-profile-card .sp-info{flex:1}.social-profile-card .sp-name{font-size:17px;font-weight:800}.social-profile-card .sp-bio{font-size:11px;color:var(--text-sec);margin-top:2px}
+.social-profile-card .sp-edit{padding:6px 14px;background:var(--card);border-radius:var(--radius-full);font-size:11px;font-weight:600;color:var(--primary);cursor:pointer;box-shadow:var(--shadow)}
+.social-profile-card .sp-pets{display:flex;gap:8px;overflow-x:auto;padding:2px 0}.social-profile-card .sp-pets::-webkit-scrollbar{display:none}
+.social-profile-card .sp-pet{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--card);border-radius:var(--radius-full);box-shadow:0 1px 6px rgba(0,0,0,.04);cursor:pointer}
+.social-profile-card .sp-pet-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--primary-light)}
+.social-profile-card .sp-pet-info{font-size:11px;font-weight:600}.social-profile-card .sp-pet-breed{font-size:9px;color:var(--text-muted);font-weight:400}
+.social-profile-card .sp-stats{display:flex;gap:0;margin-top:14px;background:var(--card);border-radius:var(--radius-sm);overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.04)}
+.social-profile-card .sp-stat{flex:1;text-align:center;padding:10px 0;border-right:1px solid var(--border)}.social-profile-card .sp-stat:last-child{border:none}
+.social-profile-card .sp-stat-val{font-size:18px;font-weight:900;color:var(--primary)}.social-profile-card .sp-stat-label{font-size:10px;color:var(--text-muted);margin-top:1px}
+.social-section{margin:0 20px 16px}
+.social-section .ss-title{font-size:15px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.social-section .ss-title .more{font-size:11px;color:var(--text-muted);font-weight:400;cursor:pointer}
+.friend-card{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;gap:12px;cursor:pointer;transition:transform .2s}
+.friend-card:active{transform:scale(.98)}
+.friend-card .fc-left{display:flex;flex-direction:column;align-items:center;gap:4px;width:56px;flex-shrink:0}
+.friend-card .fc-avatar{width:52px;height:52px;border-radius:50%;overflow:hidden;position:relative}
+.friend-card .fc-avatar img{width:100%;height:100%;object-fit:cover}
+.friend-card .fc-avatar .fc-online{position:absolute;bottom:1px;right:1px;width:12px;height:12px;border-radius:50%;background:var(--green);border:2px solid #fff}
+.friend-card .fc-name{font-size:11px;font-weight:600;text-align:center;max-width:56px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.friend-card .fc-body{flex:1;min-width:0}
+.friend-card .fc-top{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.friend-card .fc-pet-tag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:var(--radius-full);font-size:10px;font-weight:600}
+.friend-card .fc-dist{font-size:10px;color:var(--text-muted);margin-left:auto}
+.friend-card .fc-desc{font-size:12px;color:var(--text-sec);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.friend-card .fc-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.friend-card .fc-tag{padding:2px 8px;border-radius:var(--radius-full);font-size:9px;font-weight:500}
+.friend-card .fc-action{display:flex;align-items:center;gap:6px;margin-top:8px}
+.friend-card .fc-btn{padding:5px 14px;border-radius:var(--radius-full);font-size:11px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:transform .2s}
+.friend-card .fc-btn:active{transform:scale(.94)}
+.friend-card .fc-btn-primary{background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;box-shadow:0 2px 8px rgba(255,107,107,.3)}
+.friend-card .fc-btn-secondary{background:var(--bg);color:var(--text-sec)}
+.match-card{background:linear-gradient(135deg,#FFE0E0,#FFF0F0);border-radius:var(--radius);padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .2s}
+.match-card:active{transform:scale(.98)}
+.match-card .mc-avatars{display:flex;align-items:center;position:relative}
+.match-card .mc-av{width:44px;height:44px;border-radius:50%;overflow:hidden;border:2.5px solid #fff}
+.match-card .mc-av img{width:100%;height:100%;object-fit:cover}
+.match-card .mc-av:first-child{z-index:2}.match-card .mc-av:last-child{margin-left:-12px}
+.match-card .mc-heart{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--primary);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;z-index:3;border:2px solid #fff}
+.match-card .mc-info{flex:1}.match-card .mc-title{font-size:13px;font-weight:700}.match-card .mc-desc{font-size:11px;color:var(--text-sec);margin-top:2px}
+.match-card .mc-badge{padding:3px 10px;border-radius:var(--radius-full);font-size:10px;font-weight:700;background:var(--primary);color:#fff}
+
+/* ===== Profile Page - Redesigned ===== */
+.profile-banner{position:relative;margin:0 20px 0;border-radius:0 0 var(--radius) var(--radius);overflow:hidden;height:160px}
+.profile-banner img{width:100%;height:100%;object-fit:cover}
+.profile-banner::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:80px;background:linear-gradient(transparent,rgba(0,0,0,.4))}
+.profile-banner .pb-pets{position:absolute;bottom:8px;right:12px;display:flex;gap:4px;z-index:2}
+.profile-banner .pb-pet{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;background:rgba(255,255,255,.25);backdrop-filter:blur(4px);border:2px solid rgba(255,255,255,.5)}
+.profile-card-main{margin:-36px 20px 16px;background:var(--card);border-radius:var(--radius);padding:40px 18px 18px;box-shadow:var(--shadow-lg);position:relative;z-index:2}
+.profile-card-main .pcm-avatar{position:absolute;top:-32px;left:50%;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;overflow:hidden;border:3.5px solid var(--card);box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.profile-card-main .pcm-avatar img{width:100%;height:100%;object-fit:cover}
+.profile-card-main .pcm-name{text-align:center;font-size:18px;font-weight:800;margin-bottom:2px}
+.profile-card-main .pcm-id{text-align:center;font-size:11px;color:var(--text-muted);margin-bottom:10px}
+.profile-card-main .pcm-bio{text-align:center;font-size:12px;color:var(--text-sec);line-height:1.5;margin-bottom:14px}
+.profile-card-main .pcm-pets-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.profile-card-main .pcm-pet-chip{display:flex;align-items:center;gap:4px;padding:4px 10px;background:var(--primary-light);border-radius:var(--radius-full);font-size:10px;font-weight:600;color:var(--primary)}
+.profile-card-main .pcm-stats{display:flex;border-radius:var(--radius-sm);overflow:hidden;background:var(--bg)}
+.profile-card-main .pcm-stat{flex:1;text-align:center;padding:10px 0;border-right:1px solid var(--border)}
+.profile-card-main .pcm-stat:last-child{border:none}
+.profile-card-main .pcm-stat-val{font-size:20px;font-weight:900;color:var(--primary)}.profile-card-main .pcm-stat-label{font-size:10px;color:var(--text-muted);margin-top:1px}
+.profile-quick-row{display:flex;gap:10px;margin:0 20px 14px}
+.profile-quick-item{flex:1;background:var(--card);border-radius:var(--radius-sm);padding:12px;text-align:center;box-shadow:var(--shadow);cursor:pointer;transition:transform .2s}
+.profile-quick-item:active{transform:scale(.96)}
+.profile-quick-item .pqi-icon{font-size:22px;margin-bottom:4px}
+.profile-quick-item .pqi-label{font-size:11px;font-weight:600;color:var(--text-sec)}
+.profile-quick-item .pqi-sub{font-size:9px;color:var(--text-muted);margin-top:1px}
+.vip-card{background:linear-gradient(135deg,#2D3436,#636E72);border-radius:var(--radius);padding:14px 18px;margin:0 20px 14px;color:#fff;display:flex;align-items:center;gap:12px;cursor:pointer}
+.vip-card .vc-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));display:flex;align-items:center;justify-content:center;font-size:18px}
+.vip-card .vc-info{flex:1}.vip-card .vc-title{font-size:14px;font-weight:700}.vip-card .vc-desc{font-size:10px;opacity:.65}
+.menu-list{background:var(--card);border-radius:var(--radius);margin:0 20px 10px;box-shadow:var(--shadow);overflow:hidden}
+.menu-item{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;transition:background .2s;border-bottom:1px solid var(--border)}
+.menu-item:last-child{border-bottom:none}.menu-item:active{background:var(--bg)}
+.menu-item .mi-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px}
+.menu-item .mi-label{flex:1;font-size:13px;font-weight:500}.menu-item .mi-arrow{color:var(--text-muted);font-size:11px}.menu-item .mi-badge{margin-left:auto;margin-right:6px}
+
+/* ===== Modals ===== */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-overlay.show{opacity:1;pointer-events:auto}
+.modal-content{width:100%;max-width:430px;background:var(--card);border-radius:24px 24px 0 0;padding:22px 20px calc(22px + var(--safe-bottom));transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);max-height:85vh;overflow-y:auto}
+.modal-overlay.show .modal-content{transform:translateY(0)}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 14px}
+.form-group{margin-bottom:14px}.form-group label{display:block;font-size:12px;font-weight:600;margin-bottom:5px;color:var(--text-sec)}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;outline:none;transition:border-color .3s;background:var(--bg)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--primary)}
+.btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .2s;box-shadow:0 4px 16px rgba(255,107,107,.3)}
+.btn-primary:active{transform:scale(.97)}
+.btn-secondary{width:100%;padding:13px;background:var(--bg);color:var(--text-sec);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;margin-top:8px}
+.record-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s}
+.record-modal.show{opacity:1;pointer-events:auto}
+.record-form{width:100%;max-width:430px;background:var(--card);border-radius:24px 24px 0 0;padding:22px 20px calc(22px + var(--safe-bottom));transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);max-height:80vh;overflow-y:auto}
+
+/* AI Chat */
+.ai-chat{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:300;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .3s}
+.ai-chat.show{opacity:1;pointer-events:auto}.ai-chat.show .chat-inner{transform:translateX(0)}
+.chat-inner{width:100%;max-width:430px;height:100%;margin:0 auto;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.chat-header{padding:14px 18px;display:flex;align-items:center;gap:10px;background:var(--card);border-bottom:1px solid var(--border)}
+.chat-header .back-btn{width:34px;height:34px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:13px}
+.chat-header .ch-info{flex:1}.chat-header .ch-name{font-size:14px;font-weight:700}.chat-header .ch-status{font-size:10px;color:var(--green)}
+.chat-messages{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:80%;display:flex;gap:7px}.msg.ai{align-self:flex-start}.msg.user{align-self:flex-end;flex-direction:row-reverse}
+.msg .msg-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.msg.ai .msg-avatar{background:var(--primary-light)}.msg.user .msg-avatar{background:var(--blue-light)}
+.msg .msg-bubble{padding:9px 12px;border-radius:14px;font-size:13px;line-height:1.5}
+.msg.ai .msg-bubble{background:var(--card);box-shadow:var(--shadow);border-top-left-radius:3px}
+.msg.user .msg-bubble{background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border-top-right-radius:3px}
+.chat-input{padding:10px 18px calc(10px + var(--safe-bottom));background:var(--card);border-top:1px solid var(--border);display:flex;gap:8px;align-items:center}
+.chat-input input{flex:1;padding:9px 14px;border:1.5px solid var(--border);border-radius:var(--radius-full);font-size:13px;font-family:inherit;outline:none;background:var(--bg)}
+.chat-input input:focus{border-color:var(--primary)}
+.chat-input .send-btn{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;flex-shrink:0}
+.typing-dots{display:flex;gap:3px;padding:3px 0}.typing-dots span{width:5px;height:5px;border-radius:50%;background:var(--text-muted);animation:typing 1.4s infinite}
+.typing-dots span:nth-child(2){animation-delay:.2s}.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+
+/* Publish Modal */
+.publish-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:300;opacity:0;pointer-events:none;transition:opacity .3s}
+.publish-modal.show{opacity:1;pointer-events:auto}
+.publish-inner{width:100%;max-width:430px;height:100%;margin:0 auto;display:flex;flex-direction:column;transform:translateY(30px);transition:transform .4s cubic-bezier(.4,0,.2,1)}
+.publish-modal.show .publish-inner{transform:translateY(0)}
+.publish-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--card)}
+.publish-header .ph-cancel{font-size:14px;color:var(--text-sec);cursor:pointer;padding:6px}
+.publish-header .ph-title{font-size:15px;font-weight:700}
+.publish-header .ph-post{padding:6px 18px;background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;border:none;border-radius:var(--radius-full);font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
+.publish-header .ph-post:disabled{opacity:.4;cursor:default}
+.publish-photos{padding:14px 18px;display:flex;gap:8px;overflow-x:auto;background:var(--card);border-bottom:1px solid var(--border)}.publish-photos::-webkit-scrollbar{display:none}
+.pub-photo{width:90px;height:90px;border-radius:var(--radius-sm);overflow:hidden;position:relative;flex-shrink:0}
+.pub-photo img{width:100%;height:100%;object-fit:cover}
+.pub-photo .pub-del{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.5);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer}
+.pub-add-photo{width:90px;height:90px;border-radius:var(--radius-sm);border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text-muted);cursor:pointer;flex-shrink:0}
+.pub-add-photo i{font-size:22px}.pub-add-photo span{font-size:10px}
+.publish-content{flex:1;padding:14px 18px;background:var(--card)}
+.publish-content textarea{width:100%;height:100%;min-height:160px;border:none;font-size:14px;font-family:inherit;outline:none;resize:none;line-height:1.6;background:transparent}
+.publish-tags{padding:10px 18px;background:var(--card);border-top:1px solid var(--border);display:flex;gap:6px;flex-wrap:wrap}
+.publish-tags .ptag{padding:4px 12px;border-radius:var(--radius-full);font-size:11px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);color:var(--text-sec);transition:all .2s}
+.publish-tags .ptag.selected{background:var(--primary-light);border-color:var(--primary);color:var(--primary);font-weight:600}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<div class="toast" id="toast"></div>
+
+<!-- ===== PAGE: 社区 ===== -->
+<div class="page active" id="page-community">
+  <div class="sticky-top">
+    <div class="header">
+      <div class="header-title">🐾 爪印宠友圈</div>
+      <div style="display:flex;gap:6px"><div class="header-icon" onclick="showToast('🔍 搜索')"><i class="fas fa-search"></i></div><div class="header-icon" onclick="showToast('🔔 消息')"><i class="fas fa-bell"></i></div></div>
+    </div>
+    <div class="community-tabs" id="communityTabs">
+      <div class="community-tab active" onclick="switchCommunityTab(this)">推荐</div>
+      <div class="community-tab" onclick="switchCommunityTab(this)">关注</div>
+      <div class="community-tab" onclick="switchCommunityTab(this)">猫猫</div>
+      <div class="community-tab" onclick="switchCommunityTab(this)">狗狗</div>
+      <div class="community-tab" onclick="switchCommunityTab(this)">萌宠</div>
+      <div class="community-tab" onclick="switchCommunityTab(this)">养护</div>
+    </div>
+  </div>
+  <div class="waterfall" id="waterfallContainer"></div>
+</div>
+
+<!-- ===== PAGE: 宠友 ===== -->
+<div class="page" id="page-social">
+  <div class="sticky-top"><div class="header"><div style="font-size:20px;font-weight:900">🐾 宠友</div><div style="display:flex;gap:6px"><div class="header-icon" onclick="showToast('🔍 搜索')"><i class="fas fa-search"></i></div><div class="header-icon" onclick="showToast('💌 好友申请')"><i class="fas fa-user-plus"></i></div></div></div></div>
+  <div class="social-profile-card">
+    <div class="sp-top">
+      <div class="sp-avatar"><img src="https://images.unsplash.com/photo-1494790108755-2616b612b830?w=120&h=120&fit=crop&crop=face" alt=""></div>
+      <div class="sp-info"><div class="sp-name">橘子的铲屎官</div><div class="sp-bio">🧑‍💻 互联网打工人 · 2猫1狗 · 坐标朝阳</div></div>
+      <div class="sp-edit" onclick="showToast('✏️ 编辑资料')">编辑</div>
+    </div>
+    <div class="sp-pets">
+      <div class="sp-pet"><div class="sp-pet-avatar">🐱</div><div><div class="sp-pet-info">团子</div><div class="sp-pet-breed">英短蓝猫·2岁</div></div></div>
+      <div class="sp-pet"><div class="sp-pet-avatar">🐶</div><div><div class="sp-pet-info">旺财</div><div class="sp-pet-breed">柯基·3岁</div></div></div>
+      <div class="sp-pet"><div class="sp-pet-avatar">🐱</div><div><div class="sp-pet-info">小橘</div><div class="sp-pet-breed">橘猫·1岁</div></div></div>
+    </div>
+    <div class="sp-stats"><div class="sp-stat"><div class="sp-stat-val">128</div><div class="sp-stat-label">宠友</div></div><div class="sp-stat"><div class="sp-stat-val">56</div><div class="sp-stat-label">关注</div></div><div class="sp-stat"><div class="sp-stat-val">892</div><div class="sp-stat-label">获赞</div></div></div>
+  </div>
+  <div class="social-section">
+    <div class="ss-title">💑 今日缘分 <span class="more">更多 ›</span></div>
+    <div class="match-card" onclick="showToast('💕 查看匹配详情')"><div class="mc-avatars"><div class="mc-av"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&h=80&fit=crop&crop=face" alt=""></div><div class="mc-heart"><i class="fas fa-heart"></i></div><div class="mc-av"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=80&h=80&fit=crop&crop=face" alt=""></div></div><div class="mc-info"><div class="mc-title">团子 & 奶茶</div><div class="mc-desc">品种相同 · 同龄 · 都爱晒太阳</div></div><div class="mc-badge">92%</div></div>
+    <div class="match-card" onclick="showToast('💕 查看匹配详情')"><div class="mc-avatars"><div class="mc-av"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=80&h=80&fit=crop&crop=face" alt=""></div><div class="mc-heart"><i class="fas fa-heart"></i></div><div class="mc-av"><img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=80&h=80&fit=crop&crop=face" alt=""></div></div><div class="mc-info"><div class="mc-title">旺财 & 大福</div><div class="mc-desc">同品种 · 相邻小区 · 疫苗齐全</div></div><div class="mc-badge">87%</div></div>
+  </div>
+  <div class="social-section">
+    <div class="ss-title">📍 附近宠友 <span class="more">筛选 ›</span></div>
+    <div class="friend-card"><div class="fc-left"><div class="fc-avatar"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face" alt=""><div class="fc-online"></div></div><div class="fc-name">猫猫妈</div></div><div class="fc-body"><div class="fc-top"><span class="fc-pet-tag" style="background:var(--primary-light);color:var(--primary)">🐱 英短</span><span class="fc-pet-tag" style="background:var(--blue-light);color:#0984E3">♀ 已绝育</span><span class="fc-dist">0.8km</span></div><div class="fc-desc">家有蓝猫一只，想找同小区的猫友一起遛猫晒太阳～</div><div class="fc-tags"><span class="fc-tag" style="background:var(--green-light);color:var(--green)">疫苗齐全</span><span class="fc-tag" style="background:var(--yellow-light);color:var(--orange)">找玩伴</span></div><div class="fc-action"><button class="fc-btn fc-btn-primary" onclick="event.stopPropagation();showToast('👋 已发送好友申请')">加宠友</button><button class="fc-btn fc-btn-secondary" onclick="event.stopPropagation();showToast('💬 发起聊天')">打招呼</button></div></div></div>
+    <div class="friend-card"><div class="fc-left"><div class="fc-avatar"><img src="https://images.unsplash.com/photo-1514315384763-ba401779410f?w=100&h=100&fit=crop&crop=face" alt=""><div class="fc-online"></div></div><div class="fc-name">柯基控</div></div><div class="fc-body"><div class="fc-top"><span class="fc-pet-tag" style="background:var(--secondary-light);color:var(--secondary)">🐶 柯基</span><span class="fc-pet-tag" style="background:var(--orange-light);color:var(--orange)">♂ 未绝育</span><span class="fc-dist">1.2km</span></div><div class="fc-desc">旺财3岁了，想给旺财找个小伙伴周末一起玩耍！</div><div class="fc-tags"><span class="fc-tag" style="background:var(--green-light);color:var(--green)">驱虫到期</span><span class="fc-tag" style="background:var(--red-light);color:var(--red)">找配对</span></div><div class="fc-action"><button class="fc-btn fc-btn-primary" onclick="event.stopPropagation();showToast('👋 已发送好友申请')">加宠友</button><button class="fc-btn fc-btn-secondary" onclick="event.stopPropagation();showToast('💬 发起聊天')">打招呼</button></div></div></div>
+    <div class="friend-card"><div class="fc-left"><div class="fc-avatar"><img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=100&h=100&fit=crop&crop=face" alt=""></div><div class="fc-name">橘座家</div></div><div class="fc-body"><div class="fc-top"><span class="fc-pet-tag" style="background:var(--yellow-light);color:var(--orange)">🐱 橘猫</span><span class="fc-pet-tag" style="background:var(--blue-light);color:#0984E3">♂ 已绝育</span><span class="fc-dist">2.1km</span></div><div class="fc-desc">十橘九胖，我家那只也不例外😂 有没有同款橘猫家长交流减肥心得</div><div class="fc-tags"><span class="fc-tag" style="background:var(--green-light);color:var(--green)">疫苗齐全</span><span class="fc-tag" style="background:var(--yellow-light);color:var(--orange)">减肥打卡</span></div><div class="fc-action"><button class="fc-btn fc-btn-primary" onclick="event.stopPropagation();showToast('👋 已发送好友申请')">加宠友</button><button class="fc-btn fc-btn-secondary" onclick="event.stopPropagation();showToast('💬 发起聊天')">打招呼</button></div></div></div>
+    <div class="friend-card"><div class="fc-left"><div class="fc-avatar"><img src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=100&h=100&fit=crop&crop=face" alt=""><div class="fc-online"></div></div><div class="fc-name">萨摩家长</div></div><div class="fc-body"><div class="fc-top"><span class="fc-pet-tag" style="background:var(--blue-light);color:#0984E3">🐶 萨摩耶</span><span class="fc-pet-tag" style="background:var(--primary-light);color:var(--primary)">♀ 已绝育</span><span class="fc-dist">3.5km</span></div><div class="fc-desc">微笑天使来啦！想认识更多大狗家庭，周末奥森约遛狗～</div><div class="fc-tags"><span class="fc-tag" style="background:var(--green-light);color:var(--green)">疫苗齐全</span><span class="fc-tag" style="background:var(--purple-light);color:#6C5CE7">大型犬社交</span></div><div class="fc-action"><button class="fc-btn fc-btn-primary" onclick="event.stopPropagation();showToast('👋 已发送好友申请')">加宠友</button><button class="fc-btn fc-btn-secondary" onclick="event.stopPropagation();showToast('💬 发起聊天')">打招呼</button></div></div></div>
+  </div>
+  <div style="height:20px"></div>
+</div>
+
+<!-- ===== PAGE: AI 宠医 ===== -->
+<div class="page" id="page-ai">
+  <div class="sticky-top"><div class="header"><div style="font-size:20px;font-weight:900">AI 宠医</div><div class="header-icon" onclick="openApiKeyModal()"><i class="fas fa-key"></i></div></div></div>
+  <div id="apiKeyBanner" class="api-key-banner disconnected" onclick="openApiKeyModal()"><span class="akb-icon">🔑</span><div class="akb-info"><div class="akb-title">未连接百炼大模型</div><div class="akb-desc">点击输入 API Key 启用真实AI识别</div></div></div>
+  <div class="scan-hero">
+    <div class="scan-dog-wrap">
+      <div class="scan-ring-anim"></div>
+      <div class="scan-dog-body">🐕</div>
+      <div class="scan-beam"></div>
+      <span class="scan-sparkles">✨</span><span class="scan-sparkles">✨</span><span class="scan-sparkles">✨</span>
+    </div>
+    <h2>AI 视觉扫描</h2>
+    <p>拍摄宠物照片，AI智能分析健康状况</p>
+  </div>
+  <div class="scan-options">
+    <div class="scan-option" onclick="selectScanType('skin',this)"><div class="so-icon" style="background:#FFE0E0">🐾</div><div class="so-title">皮肤扫描</div><div class="so-desc">猫癣·皮炎·脱毛</div></div>
+    <div class="scan-option" onclick="selectScanType('eye',this)"><div class="so-icon" style="background:#EBF5FF">👁️</div><div class="so-title">眼睛扫描</div><div class="so-desc">泪痕·红肿·白内障</div></div>
+    <div class="scan-option" onclick="selectScanType('gum',this)"><div class="so-icon" style="background:#FFE0E0">🦷</div><div class="so-title">牙龈扫描</div><div class="so-desc">贫血·口炎·牙结石</div></div>
+    <div class="scan-option" onclick="selectScanType('poop',this)"><div class="so-icon" style="background:#E0F7F5">💩</div><div class="so-title">便便扫描</div><div class="so-desc">消化·寄生虫·血便</div></div>
+  </div>
+  <div class="scan-upload-area" id="scanUploadArea"><div class="scan-upload-preview" id="scanPreview" onclick="triggerScanUpload()"><div class="scan-upload-placeholder" id="scanPlaceholder"><i class="fas fa-cloud-upload-alt"></i><span>点击上传宠物照片</span><div class="sub">支持拍照或从相册选择</div></div></div><div class="scan-upload-actions"><button class="btn-camera" onclick="triggerScanCamera()"><i class="fas fa-camera"></i> 拍照</button><button class="btn-album" onclick="triggerScanUpload()"><i class="fas fa-images"></i> 相册</button></div></div>
+  <div class="scan-submit-wrap" id="scanSubmitWrap"><button class="btn-primary" id="scanSubmitBtn" onclick="submitAIScan()" disabled style="opacity:.5"><i class="fas fa-brain"></i> 开始 AI 分析</button></div>
+  <div id="scanAnalyzing" class="scan-analyzing"><div class="sa-spinner"></div><div class="sa-text">🧠 AI 正在分析中...</div><div class="sa-sub">阿里云百炼大模型正在识别</div><div id="scanStreamPreview" class="scan-stream-preview"></div></div>
+  <div id="scanStreamResult" class="scan-stream-result"><div class="ssr-header"><div class="ssr-icon" style="background:var(--primary-light)">🔬</div><div><div style="font-size:15px;font-weight:700">AI 分析完成</div><div style="font-size:10px;color:var(--text-muted)">由阿里云百炼大模型提供</div></div></div><div class="ssr-body" id="ssrContent"></div><div class="ssr-actions"><button style="background:linear-gradient(135deg,var(--primary),#FF8E8E);color:#fff;box-shadow:0 4px 12px rgba(255,107,107,.3)" onclick="openAIChat()"><i class="fas fa-comment-medical"></i> 在线问诊</button><button style="background:var(--bg);color:var(--text-sec)" onclick="resetScan()"><i class="fas fa-redo"></i> 重新扫描</button></div></div>
+  <div id="aiPageRest">
+    <div class="ai-consult-card" onclick="openAIChat()"><div class="acc-icon">🤖</div><div class="acc-info"><div class="acc-title">在线兽医极速问诊</div><div class="acc-desc">AI预问诊 + 真人兽医复核</div></div><div class="acc-btn">立即问诊</div></div>
+    <div style="padding:0 20px 20px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px"><div style="background:var(--card);border-radius:var(--radius-sm);padding:14px 8px;text-align:center;box-shadow:var(--shadow);cursor:pointer" onclick="showToast('🏥 附近医院')"><div style="font-size:24px;margin-bottom:4px">🏥</div><div style="font-size:11px;font-weight:600;color:var(--text-sec)">医院挂号</div></div><div style="background:var(--card);border-radius:var(--radius-sm);padding:14px 8px;text-align:center;box-shadow:var(--shadow);cursor:pointer" onclick="showToast('🛡️ 宠物医保')"><div style="font-size:24px;margin-bottom:4px">🛡️</div><div style="font-size:11px;font-weight:600;color:var(--text-sec)">宠物医保</div></div><div style="background:var(--card);border-radius:var(--radius-sm);padding:14px 8px;text-align:center;box-shadow:var(--shadow);cursor:pointer" onclick="showToast('📋 健康报告')"><div style="font-size:24px;margin-bottom:4px">📋</div><div style="font-size:11px;font-weight:600;color:var(--text-sec)">健康报告</div></div></div>
+  </div>
+</div>
+
+<!-- ===== PAGE: 我的 ===== -->
+<div class="page" id="page-profile">
+  <div class="profile-banner"><img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&h=320&fit=crop" alt=""><div class="pb-pets"><div class="pb-pet">🐱</div><div class="pb-pet">🐶</div><div class="pb-pet">🐱</div></div></div>
+  <div class="profile-card-main">
+    <div class="pcm-avatar"><img src="https://images.unsplash.com/photo-1494790108755-2616b612b830?w=128&h=128&fit=crop&crop=face" alt=""></div>
+    <div class="pcm-name">橘子的铲屎官</div>
+    <div class="pcm-id">ID: paw_2024_0816</div>
+    <div class="pcm-bio">🧑‍💻 互联网打工人 | 2猫1狗铲屎官 | 坐标北京朝阳<br>🌍 养宠第3年 · 累计救助5只流浪猫</div>
+    <div class="pcm-pets-row"><div class="pcm-pet-chip">🐱 团子 · 英短2岁</div><div class="pcm-pet-chip">🐶 旺财 · 柯基3岁</div><div class="pcm-pet-chip">🐱 小橘 · 橘猫1岁</div></div>
+    <div class="pcm-stats"><div class="pcm-stat"><div class="pcm-stat-val">128</div><div class="pcm-stat-label">宠友</div></div><div class="pcm-stat"><div class="pcm-stat-val">56</div><div class="pcm-stat-label">关注</div></div><div class="pcm-stat"><div class="pcm-stat-val">892</div><div class="pcm-stat-label">获赞</div></div><div class="pcm-stat"><div class="pcm-stat-val">36</div><div class="pcm-stat-label">动态</div></div></div>
+  </div>
+  <div class="profile-quick-row">
+    <div class="profile-quick-item" onclick="showToast('❤️ 我的收藏')"><div class="pqi-icon">❤️</div><div class="pqi-label">收藏</div><div class="pqi-sub">28篇</div></div>
+    <div class="profile-quick-item" onclick="showToast('📝 健康记录')"><div class="pqi-icon">📝</div><div class="pqi-label">记录</div><div class="pqi-sub">3条待办</div></div>
+    <div class="profile-quick-item" onclick="showToast('🏆 成就')"><div class="pqi-icon">🏆</div><div class="pqi-label">成就</div><div class="pqi-sub">12枚</div></div>
+    <div class="profile-quick-item" onclick="showToast('🛒 订单')"><div class="pqi-icon">📦</div><div class="pqi-label">订单</div><div class="pqi-sub">3笔</div></div>
+  </div>
+  <div class="vip-card" onclick="showToast('👑 开通会员')"><div class="vc-icon">👑</div><div class="vc-info"><div class="vc-title">开通爪印会员</div><div class="vc-desc">无限AI扫描 · 专属兽医 · 会员折扣</div></div><i class="fas fa-chevron-right" style="color:rgba(255,255,255,.4);font-size:12px"></i></div>
+  <div class="menu-list">
+    <div class="menu-item" onclick="openApiKeyModal()"><div class="mi-icon" style="background:#F0EEFF;color:#6C5CE7">🔑</div><div class="mi-label">百炼 API Key</div><span class="badge badge-purple" id="profileKeyBadge">未设置</span><i class="fas fa-chevron-right mi-arrow"></i></div>
+    <div class="menu-item" onclick="switchTab(2)"><div class="mi-icon" style="background:#FFE0E0;color:var(--primary)">🤖</div><div class="mi-label">AI 宠医</div><i class="fas fa-chevron-right mi-arrow"></i></div>
+    <div class="menu-item" onclick="openRecordModal('feed')"><div class="mi-icon" style="background:#E0F7F5;color:var(--secondary)">📝</div><div class="mi-label">健康记录</div><span class="badge badge-red">3条</span><i class="fas fa-chevron-right mi-arrow"></i></div>
+  </div>
+  <div class="menu-list">
+    <div class="menu-item" onclick="showToast('🏥 附近医院')"><div class="mi-icon" style="background:#EBF5FF;color:#0984E3">🏥</div><div class="mi-label">附近医院</div><i class="fas fa-chevron-right mi-arrow"></i></div>
+    <div class="menu-item" onclick="showToast('🛡️ 宠物医保')"><div class="mi-icon" style="background:#E0FFF5;color:var(--green)">🛡️</div><div class="mi-label">宠物医保</div><i class="fas fa-chevron-right mi-arrow"></i></div>
+    <div class="menu-item" onclick="showToast('🧬 基因保存')"><div class="mi-icon" style="background:#F0EEFF;color:#6C5CE7">🧬</div><div class="mi-label">基因保存</div><i class="fas fa-chevron-right mi-arrow"></i></div>
+  </div>
+  <div class="menu-list">
+    <div class="menu-item" onclick="showToast('⚙️ 设置')"><div class="mi-icon" style="background:#F0F0F5;color:var(--text-sec)">⚙️</div><div class="mi-label">设置</div><i class="fas fa-chevron-right mi-arrow"></i></div>
+    <div class="menu-item" onclick="showToast('📞 联系客服')"><div class="mi-icon" style="background:#F0F0F5;color:var(--text-sec)">📞</div><div class="mi-label">联系客服</div><i class="fas fa-chevron-right mi-arrow"></i></div>
+  </div>
+  <div style="height:20px"></div>
+</div>
+
+<!-- ===== Bottom Nav: 社区 | 宠友 | +(发布) | AI宠医 | 我的 ===== -->
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="switchTab(0)"><i class="fas fa-compass"></i><span>社区</span></div>
+  <div class="nav-item" onclick="switchTab(1)"><i class="fas fa-paw"></i><span>宠友</span><div class="nav-dot"></div></div>
+  <div class="nav-item center-btn" onclick="openPublishModal()"><i class="fas fa-plus"></i></div>
+  <div class="nav-item" onclick="switchTab(2)"><i class="fas fa-stethoscope"></i><span>宠医</span></div>
+  <div class="nav-item" onclick="switchTab(3)"><i class="fas fa-user"></i><span>我的</span></div>
+</div>
+
+<!-- ===== Detail Overlay ===== -->
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-inner" id="detailInner"></div>
+</div>
+
+<!-- ===== Image Viewer ===== -->
+<div class="img-viewer" id="imgViewer" onclick="closeImgViewer()">
+  <div class="iv-close" onclick="closeImgViewer()"><i class="fas fa-times"></i></div>
+  <img id="imgViewerImg" src="" alt="">
+  <div class="iv-counter" id="imgViewerCounter"></div>
+</div>
+
+<!-- ===== Record Modal ===== -->
+<div class="record-modal" id="recordModal"><div class="record-form"><div class="modal-handle"></div><h3 style="font-size:17px;font-weight:700;margin-bottom:16px" id="recordTitle">记录喂食</h3><div class="form-group"><label>时间</label><input type="datetime-local" id="recordTime"></div><div class="form-group" id="recordField1"><label id="field1Label">食物类型</label><select id="field1Select"><option>干粮</option><option>湿粮</option><option>零食</option><option>自制饭</option></select></div><div class="form-group" id="recordField2"><label id="field2Label">食量</label><select id="field2Select"><option>少量</option><option>正常</option><option>较多</option><option>未进食</option></select></div><div class="form-group"><label>备注</label><textarea rows="2" placeholder="添加备注..." id="recordNote"></textarea></div><button class="btn-primary" onclick="saveRecord()">保存</button><button class="btn-secondary" onclick="closeRecordModal()">取消</button></div></div>
+
+<!-- ===== API Key Modal ===== -->
+<div class="modal-overlay" id="apiKeyModal"><div class="modal-content"><div class="modal-handle"></div><div style="text-align:center;margin-bottom:16px"><div style="font-size:42px;margin-bottom:6px">🔑</div><h3 style="font-size:17px;font-weight:700">阿里云百炼 API Key</h3><p style="font-size:11px;color:var(--text-muted);margin-top:3px">连接百炼大模型，启用真实AI视觉识别</p></div><div class="form-group"><label>API Key</label><input type="password" id="apiKeyInput" placeholder="sk-xxxxxxxxxxxxxxxx" style="font-family:monospace"></div><div style="background:var(--blue-light);border-radius:var(--radius-sm);padding:10px;margin-bottom:14px;font-size:11px;color:#0984E3;line-height:1.6">💡 访问 <a href="https://bailian.console.aliyun.com" target="_blank" style="color:#0984E3;text-decoration:underline">百炼控制台</a> 创建 API Key<br>⚠️ Key 仅保存在本地浏览器</div><button class="btn-primary" id="apiKeyVerifyBtn" onclick="verifyAndSaveApiKey()">验证并保存</button><button class="btn-secondary" onclick="closeApiKeyModal()">取消</button><div id="apiKeyStatus" style="text-align:center;margin-top:10px;font-size:11px;color:var(--text-muted)"></div></div></div>
+
+<!-- ===== Publish Modal ===== -->
+<div class="publish-modal" id="publishModal"><div class="publish-inner"><div class="publish-header"><div class="ph-cancel" onclick="closePublishModal()">取消</div><div class="ph-title">发布动态</div><button class="ph-post" id="pubPostBtn" onclick="submitPublish()" disabled>发布</button></div><div class="publish-photos" id="pubPhotos"><div class="pub-add-photo" onclick="document.getElementById('pubFileInput').click()"><i class="fas fa-plus"></i><span>添加照片</span></div></div><div class="publish-content"><textarea placeholder="分享你和宠物的日常..." id="pubText" oninput="onPubTextChange()"></textarea></div><div class="publish-tags"><div class="ptag" onclick="togglePubTag(this)">🐱 猫咪日常</div><div class="ptag" onclick="togglePubTag(this)">🐶 狗狗日记</div><div class="ptag" onclick="togglePubTag(this)">🏥 养护心得</div><div class="ptag" onclick="togglePubTag(this)">🍖 美食分享</div><div class="ptag" onclick="togglePubTag(this)">📸 萌宠出片</div><div class="ptag" onclick="togglePubTag(this)">❓ 求助问诊</div></div></div></div>
+
+<!-- ===== AI Chat ===== -->
+<div class="ai-chat" id="aiChat"><div class="chat-inner"><div class="chat-header"><button class="back-btn" onclick="closeAIChat()"><i class="fas fa-arrow-left"></i></button><div class="ch-info"><div class="ch-name">AI 宠医助手</div><div class="ch-status">● 在线</div></div><span class="badge badge-green" style="font-size:10px">AI问诊</span></div><div class="chat-messages" id="chatMessages"><div class="msg ai"><div class="msg-avatar">🤖</div><div class="msg-bubble">您好！我是爪印AI宠医助手 🐾<br>请描述您宠物的症状，我会为您初步分析。</div></div></div><div class="chat-input"><input type="text" placeholder="描述宠物的症状..." id="chatInput" onkeypress="if(event.key==='Enter')sendChatMsg()"><button class="send-btn" onclick="sendChatMsg()"><i class="fas fa-paper-plane"></i></button></div></div></div>
+
+<input type="file" id="scanFileInput" accept="image/*" style="display:none" onchange="handleScanFile(this)">
+<input type="file" id="scanCameraInput" accept="image/*" capture="environment" style="display:none" onchange="handleScanFile(this)">
+<input type="file" id="pubFileInput" accept="image/*" multiple style="display:none" onchange="handlePubFile(this)">
+</div>
+
+<script>
+const pages=['page-community','page-social','page-ai','page-profile'];
+const navItems=document.querySelectorAll('.nav-item');
+let currentScanType='',scanImageBase64='',scanImageMime='',apiKey=localStorage.getItem('bailian_api_key')||'';
+
+function switchTab(idx){pages.forEach((p,i)=>document.getElementById(p).classList.toggle('active',i===idx));navItems.forEach((n,i)=>n.classList.toggle('active',i===idx));}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function switchCommunityTab(el){document.querySelectorAll('.community-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
+
+// ===== Waterfall Data =====
+const femaleAvatars=[
+  'https://images.unsplash.com/photo-1494790108755-2616b612b830?w=60&h=60&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=60&h=60&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=60&h=60&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=60&h=60&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=60&h=60&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1514315384763-ba401779410f?w=60&h=60&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=60&h=60&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=60&h=60&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=60&h=60&fit=crop&crop=face',
+  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=60&h=60&fit=crop&crop=face',
+];
+const posts=[
+  {id:1,user:'猫猫小管家',av:0,title:'团子今天又偷吃狗粮了，被我抓个正着😂',img:'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400&h=500&fit=crop',h:220,likes:328,tag:'猫咪日常',tagColor:'var(--primary-light)',tagText:'var(--primary)',loc:'北京朝阳',comments:[{av:2,name:'布偶妈妈',text:'哈哈哈太可爱了！',time:'2小时前'},{av:5,name:'橘座家',text:'我家也是！偷吃成瘾',time:'1小时前'}]},
+  {id:2,user:'柯基控',av:1,title:'旺财的短腿日常：追蝴蝶追了半小时一个都没抓到',img:'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=320&fit=crop',h:180,likes:562,tag:'狗狗日记',tagColor:'var(--secondary-light)',tagText:'var(--secondary)',loc:'北京海淀',comments:[{av:3,name:'柯基控',text:'短腿的忧伤啊😂',time:'3小时前'}]},
+  {id:3,user:'养猫指南',av:2,title:'新手养猫必看！猫三联疫苗接种全攻略',img:'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?w=400&h=400&fit=crop',h:240,likes:1203,tag:'养护心得',tagColor:'var(--green-light)',tagText:'var(--green)',loc:'',comments:[{av:6,name:'新手猫妈',text:'太及时了！刚领养一只',time:'5小时前'},{av:0,name:'猫猫小管家',text:'收藏了！',time:'4小时前'},{av:4,name:'萨摩家长',text:'狗狗也需要哦',time:'3小时前'}]},
+  {id:4,user:'橘座驾到',av:3,title:'十橘九胖不是传说，我家小橘3个月就已经5斤了',img:'https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=400&h=480&fit=crop',h:260,likes:891,tag:'猫咪日常',tagColor:'var(--primary-light)',tagText:'var(--primary)',loc:'上海浦东',comments:[]},
+  {id:5,user:'萨摩微笑天使',av:4,title:'雪球的毛太白了，每次出门都像一朵行走的棉花糖',img:'https://images.unsplash.com/photo-1529429617124-95b109e86bb8?w=400&h=350&fit=crop',h:200,likes:445,tag:'萌宠出片',tagColor:'var(--purple-light)',tagText:'#6C5CE7',loc:'北京西城',comments:[{av:1,name:'柯基控',text:'好想rua！',time:'6小时前'}]},
+  {id:6,user:'宠物营养师',av:5,title:'自制猫饭食谱分享！鸡胸肉+南瓜+鱼油',img:'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=300&fit=crop',h:170,likes:678,tag:'美食分享',tagColor:'var(--yellow-light)',tagText:'var(--orange)',loc:'',comments:[]},
+  {id:7,user:'布偶妈妈',av:6,title:'布偶猫的蓝眼睛真的太好看了，每次对视都心动',img:'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=400&h=500&fit=crop',h:270,likes:2104,tag:'萌宠出片',tagColor:'var(--purple-light)',tagText:'#6C5CE7',loc:'深圳南山',comments:[{av:0,name:'猫猫小管家',text:'太美了！',time:'1天前'}]},
+  {id:8,user:'泰迪爱画画',av:7,title:'给小泰迪穿了新买的雨衣，看起来像个小蘑菇🍄',img:'https://images.unsplash.com/photo-1583337130417-13104dec14a2?w=400&h=380&fit=crop',h:210,likes:334,tag:'狗狗日记',tagColor:'var(--secondary-light)',tagText:'var(--secondary)',loc:'杭州西湖',comments:[]},
+  {id:9,user:'宠物医生小王',av:8,title:'猫咪频繁呕吐怎么办？这几种情况一定要及时就医！',img:'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=360&fit=crop',h:200,likes:1567,tag:'求助问诊',tagColor:'var(--red-light)',tagText:'var(--red)',loc:'',comments:[{av:2,name:'布偶妈妈',text:'收藏了，谢谢医生',time:'8小时前'}]},
+  {id:10,user:'金毛大暖男',av:9,title:'金毛太暖了，每次我难过它都会默默靠过来',img:'https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=400&h=440&fit=crop',h:250,likes:723,tag:'狗狗日记',tagColor:'var(--secondary-light)',tagText:'var(--secondary)',loc:'成都锦江',comments:[{av:4,name:'萨摩家长',text:'大狗真的超暖❤️',time:'12小时前'}]},
+];
+
+function renderWaterfall(){
+  const c=document.getElementById('waterfallContainer');
+  c.innerHTML=posts.map((p,i)=>`
+    <div class="wf-card" style="animation-delay:${i*0.06}s" onclick="openDetail(${p.id})">
+      <div class="wf-img" style="height:${p.h}px;background:linear-gradient(135deg,var(--primary-light),var(--border));display:flex;align-items:center;justify-content:center;overflow:hidden">
+        <img src="${p.img}" alt="" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">
+      </div>
+      <div class="wf-body">
+        <div class="wf-title">${p.title}</div>
+        <span class="wf-tag" style="background:${p.tagColor};color:${p.tagText}">${p.tag}</span>
+        ${p.loc?`<div class="wf-location"><i class="fas fa-map-marker-alt"></i>${p.loc}</div>`:''}
+        <div class="wf-footer">
+          <div class="wf-user"><img src="${femaleAvatars[p.av]}" alt="" onerror="this.style.display='none'"><span class="wf-uname">${p.user}</span></div>
+          <div class="wf-likes" onclick="event.stopPropagation();toggleLike(this,${p.id})"><i class="far fa-heart"></i> ${p.likes>999?(p.likes/1000).toFixed(1)+'k':p.likes}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleLike(el,id){el.classList.toggle('liked');if(el.classList.contains('liked')){el.innerHTML='<i class="fas fa-heart"></i> '+(parseInt(el.textContent.replace(/\D/g,''))+1);showToast('❤️ 已点赞');}else{el.innerHTML='<i class="far fa-heart"></i> '+(parseInt(el.textContent.replace(/\D/g,''))-1);}}
+
+// ===== Detail Page =====
+function openDetail(id){
+  const p=posts.find(x=>x.id===id);if(!p)return;
+  const d=document.getElementById('detailOverlay');
+  document.getElementById('detailInner').innerHTML=`
+    <div class="detail-header"><button class="dh-back" onclick="closeDetail()"><i class="fas fa-arrow-left"></i></button><div class="dh-user"><img src="${femaleAvatars[p.av]}" alt="" onerror="this.style.display='none'"><div><div class="dh-name">${p.user}</div><div class="dh-time">3小时前</div></div></div><button class="dh-follow" onclick="showToast('✅ 已关注')">+关注</button></div>
+    <div class="detail-photos" onclick="openImgViewer('${p.img}')"><div class="detail-photos-inner"><img src="${p.img}" alt="" style="cursor:zoom-in" onerror="this.style.display='none'"></div></div>
+    <div class="detail-content">
+      <div class="dc-title">${p.title}</div>
+      <div class="dc-tags"><span class="dc-tag" style="background:${p.tagColor};color:${p.tagText}">${p.tag}</span>${p.loc?`<span class="dc-tag" style="background:var(--bg);color:var(--text-sec)"><i class="fas fa-map-marker-alt"></i> ${p.loc}</span>`:''}</div>
+    </div>
+    <div class="detail-actions">
+      <div class="da-item" onclick="this.classList.toggle('liked');showToast(this.classList.contains('liked')?'❤️ 已点赞':'取消点赞')"><i class="far fa-heart"></i> ${p.likes}</div>
+      <div class="da-item" onclick="document.getElementById('commentInput').focus()"><i class="far fa-comment"></i> ${p.comments.length}</div>
+      <div class="da-item" onclick="this.classList.toggle('collected');showToast(this.classList.contains('collected')?'⭐ 已收藏':'取消收藏')"><i class="far fa-bookmark"></i></div>
+      <div class="da-item" style="margin-left:auto" onclick="showToast('🔗 已复制链接')"><i class="fas fa-share-alt"></i></div>
+    </div>
+    <div class="detail-comments">
+      <div class="dc-section-title">评论 ${p.comments.length}</div>
+      ${p.comments.length?p.comments.map(c=>`<div class="comment-item"><img src="${femaleAvatars[c.av]}" alt="" onerror="this.style.display='none'"><div class="ci-body"><div class="ci-name">${c.name}</div><div class="ci-text">${c.text}</div><div class="ci-meta"><span>${c.time}</span><span style="cursor:pointer">点赞</span><span style="cursor:pointer">回复</span></div></div></div>`).join(''):'<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">暂无评论，来说两句吧～</div>'}
+    </div>
+    <div class="detail-comment-input"><input type="text" id="commentInput" placeholder="写下你的评论..."><button onclick="submitComment()">发送</button></div>
+  `;
+  d.classList.add('show');
+}
+function closeDetail(){document.getElementById('detailOverlay').classList.remove('show');}
+function submitComment(){const i=document.getElementById('commentInput');if(!i.value.trim())return;showToast('✅ 评论已发送');i.value='';}
+
+// ===== Image Viewer =====
+function openImgViewer(src){const v=document.getElementById('imgViewer');document.getElementById('imgViewerImg').src=src;document.getElementById('imgViewerCounter').textContent='';v.classList.add('show');}
+function closeImgViewer(){document.getElementById('imgViewer').classList.remove('show');}
+
+// ===== Publish =====
+let pubPhotos=[];
+function openPublishModal(){document.getElementById('publishModal').classList.add('show');}
+function closePublishModal(){document.getElementById('publishModal').classList.remove('show');pubPhotos=[];document.getElementById('pubText').value='';renderPubPhotos();}
+function onPubTextChange(){document.getElementById('pubPostBtn').disabled=!document.getElementById('pubText').value.trim();}
+function togglePubTag(el){el.classList.toggle('selected');}
+function handlePubFile(input){Array.from(input.files).forEach(f=>{if(pubPhotos.length>=9)return;const reader=new FileReader();reader.onload=e=>{pubPhotos.push(e.target.result);renderPubPhotos();};reader.readAsDataURL(f);});input.value='';}
+function renderPubPhotos(){const c=document.getElementById('pubPhotos');c.innerHTML=pubPhotos.map((p,i)=>`<div class="pub-photo"><img src="${p}"><div class="pub-del" onclick="pubPhotos.splice(${i},1);renderPubPhotos()">✕</div></div>`).join('')+(pubPhotos.length<9?`<div class="pub-add-photo" onclick="document.getElementById('pubFileInput').click()"><i class="fas fa-plus"></i><span>添加</span></div>`:'');}
+function submitPublish(){showToast('✅ 动态发布成功！');closePublishModal();}
+
+// ===== Record Modal =====
+let currentRecordType='';
+function openRecordModal(type){currentRecordType=type;const modal=document.getElementById('recordModal'),title=document.getElementById('recordTitle');const f1l=document.getElementById('field1Label'),f1s=document.getElementById('field1Select'),f2l=document.getElementById('field2Label'),f2s=document.getElementById('field2Select');document.getElementById('recordTime').value=new Date().toISOString().slice(0,16);const wi=document.getElementById('weightInput');if(wi)wi.remove();document.getElementById('field1Select').style.display='';if(type==='feed'){title.textContent='🍖 记录喂食';f1l.textContent='食物类型';f1s.innerHTML='<option>干粮</option><option>湿粮</option><option>零食</option><option>自制饭</option>';f2l.textContent='食量';f2s.innerHTML='<option>少量</option><option>正常</option><option>较多</option><option>未进食</option>';}else if(type==='poop'){title.textContent='💩 记录排便';f1l.textContent='排便状态';f1s.innerHTML='<option>正常成型</option><option>偏软</option><option>稀便</option><option>血便</option>';f2l.textContent='次数';f2s.innerHTML='<option>1次</option><option>2次</option><option>3次+</option>';}else{title.textContent='⚖️ 记录体重';f1l.textContent='体重(kg)';f1s.style.display='none';const inp=document.createElement('input');inp.type='number';inp.step='0.1';inp.placeholder='输入体重';inp.id='weightInput';inp.style.cssText='width:100%;padding:11px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;outline:none;background:var(--bg)';f1s.parentNode.insertBefore(inp,f1s);f2l.textContent='体态';f2s.innerHTML='<option>偏瘦</option><option>正常</option><option>偏胖</option>';}modal.classList.add('show');}
+function closeRecordModal(){document.getElementById('recordModal').classList.remove('show');const wi=document.getElementById('weightInput');if(wi)wi.remove();document.getElementById('field1Select').style.display='';}
+function saveRecord(){closeRecordModal();const n={feed:'喂食',poop:'排便',vomit:'呕吐',weight:'体重'};showToast(`✅ ${n[currentRecordType]}已记录`);}
+
+// ===== API Key =====
+function updateApiKeyUI(){const b=document.getElementById('apiKeyBanner'),bg=document.getElementById('profileKeyBadge');if(apiKey){b.className='api-key-banner connected';b.innerHTML=`<span class="akb-icon">✅</span><div class="akb-info"><div class="akb-title">百炼大模型已连接</div><div class="akb-desc">Key: ${apiKey.slice(0,8)}****</div></div>`;bg.textContent='已连接';bg.className='badge badge-green';}else{b.className='api-key-banner disconnected';b.innerHTML=`<span class="akb-icon">🔑</span><div class="akb-info"><div class="akb-title">未连接百炼大模型</div><div class="akb-desc">点击输入 API Key</div></div>`;bg.textContent='未设置';bg.className='badge badge-purple';}}
+function openApiKeyModal(){document.getElementById('apiKeyInput').value=apiKey;document.getElementById('apiKeyStatus').textContent='';document.getElementById('apiKeyModal').classList.add('show');}
+function closeApiKeyModal(){document.getElementById('apiKeyModal').classList.remove('show');}
+async function verifyAndSaveApiKey(){const key=document.getElementById('apiKeyInput').value.trim(),st=document.getElementById('apiKeyStatus'),btn=document.getElementById('apiKeyVerifyBtn');if(!key){st.textContent='❌ 请输入 API Key';st.style.color='var(--red)';return;}btn.disabled=true;btn.style.opacity='.5';st.textContent='🔄 验证中...';st.style.color='var(--text-muted)';try{const r=await fetch('/api/verify-key',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({api_key:key})});const d=await r.json();if(d.valid){apiKey=key;localStorage.setItem('bailian_api_key',key);updateApiKeyUI();st.textContent='✅ 验证成功！';st.style.color='var(--green)';setTimeout(()=>closeApiKeyModal(),1000);showToast('✅ 百炼连接成功！');}else{st.textContent='❌ '+(d.error||'无效Key');st.style.color='var(--red)';}}catch(e){st.textContent='❌ 网络错误';st.style.color='var(--red)';}btn.disabled=false;btn.style.opacity='1';}
+
+// ===== AI Scan =====
+function selectScanType(type,el){currentScanType=type;document.querySelectorAll('.scan-option').forEach(o=>o.classList.remove('selected'));if(el)el.classList.add('selected');document.getElementById('scanUploadArea').style.display='block';document.getElementById('scanSubmitWrap').style.display='block';document.getElementById('scanAnalyzing').style.display='none';document.getElementById('scanStreamResult').style.display='none';document.getElementById('aiPageRest').style.display='none';resetScanImage();}
+function resetScanImage(){scanImageBase64='';scanImageMime='';const p=document.getElementById('scanPreview'),ph=document.getElementById('scanPlaceholder');const img=p.querySelector('img');if(img)img.remove();ph.style.display='flex';document.getElementById('scanSubmitBtn').disabled=true;document.getElementById('scanSubmitBtn').style.opacity='.5';}
+function triggerScanUpload(){document.getElementById('scanFileInput').click();}
+function triggerScanCamera(){document.getElementById('scanCameraInput').click();}
+function handleScanFile(input){const file=input.files[0];if(!file)return;if(!file.type.startsWith('image/')){showToast('❌ 请选择图片');return;}scanImageMime=file.type;const reader=new FileReader();reader.onload=e=>{const url=e.target.result;scanImageBase64=url.split(',')[1];const p=document.getElementById('scanPreview'),ph=document.getElementById('scanPlaceholder');ph.style.display='none';let img=p.querySelector('img');if(!img){img=document.createElement('img');p.insertBefore(img,ph);}img.src=url;img.style.cssText='width:100%;height:180px;object-fit:cover;display:block;border-radius:16px 16px 0 0';document.getElementById('scanSubmitBtn').disabled=false;document.getElementById('scanSubmitBtn').style.opacity='1';};reader.readAsDataURL(file);input.value='';}
+async function submitAIScan(){if(!apiKey){showToast('❌ 请先设置 API Key');openApiKeyModal();return;}if(!scanImageBase64||!currentScanType){showToast('❌ 请上传照片并选择类型');return;}document.getElementById('scanUploadArea').style.display='none';document.getElementById('scanSubmitWrap').style.display='none';document.getElementById('scanAnalyzing').style.display='block';document.getElementById('scanStreamResult').style.display='none';document.getElementById('aiPageRest').style.display='none';document.getElementById('scanStreamPreview').textContent='';try{const r=await fetch('/api/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({api_key:apiKey,image_base64:scanImageBase64,scan_type:currentScanType,mime_type:scanImageMime})});const reader=r.body.getReader(),decoder=new TextDecoder();let full='';const preview=document.getElementById('scanStreamPreview');while(true){const{done,value}=await reader.read();if(done)break;const chunk=decoder.decode(value,{stream:true});const lines=chunk.split('\n');for(const line of lines){if(!line.startsWith('data: '))continue;const d=line.slice(6);if(d.trim()==='[DONE]')continue;try{const p=JSON.parse(d);if(p.error){showToast('❌ '+p.error);resetScan();return;}if(p.content){full+=p.content;preview.textContent=full;preview.scrollTop=preview.scrollHeight;}}catch(e){}}}document.getElementById('scanAnalyzing').style.display='none';document.getElementById('scanStreamResult').style.display='block';document.getElementById('ssrContent').innerHTML=full.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');}catch(e){showToast('❌ 请求失败');resetScan();}}
+function resetScan(){document.getElementById('scanUploadArea').style.display='none';document.getElementById('scanSubmitWrap').style.display='none';document.getElementById('scanAnalyzing').style.display='none';document.getElementById('scanStreamResult').style.display='none';document.getElementById('aiPageRest').style.display='block';document.querySelectorAll('.scan-option').forEach(o=>o.classList.remove('selected'));currentScanType='';resetScanImage();}
+
+// ===== AI Chat =====
+const aiResponses=['根据您的描述，可能存在毛球堵塞或饮食性便秘。<br><br>建议：<br>1. 增加饮水量<br>2. 喂食猫草帮助排毛球<br>3. 如24h无排便建议就医','综合判断：<br><br>🔴 风险等级：中等<br>📋 可能原因：毛球堵塞 / 饮食变化<br><br>需要我帮您预约附近医院吗？'];
+let chatStep=0;
+function openAIChat(){document.getElementById('aiChat').classList.add('show');chatStep=0;}
+function closeAIChat(){document.getElementById('aiChat').classList.remove('show');}
+function sendChatMsg(){const input=document.getElementById('chatInput'),msg=input.value.trim();if(!msg)return;const msgs=document.getElementById('chatMessages');const ud=document.createElement('div');ud.className='msg user float-up';ud.innerHTML=`<div class="msg-avatar">👤</div><div class="msg-bubble">${msg}</div>`;msgs.appendChild(ud);input.value='';const td=document.createElement('div');td.className='msg ai float-up';td.id='typing-indicator';td.innerHTML=`<div class="msg-avatar">🤖</div><div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;msgs.appendChild(td);msgs.scrollTop=msgs.scrollHeight;setTimeout(()=>{const t=document.getElementById('typing-indicator');if(t)t.remove();const ad=document.createElement('div');ad.className='msg ai float-up';ad.innerHTML=`<div class="msg-avatar">🤖</div><div class="msg-bubble">${chatStep<aiResponses.length?aiResponses[chatStep]:'如需更多帮助，可以随时咨询 🐾'}</div>`;msgs.appendChild(ad);msgs.scrollTop=msgs.scrollHeight;chatStep++;},1500);}
+
+// ===== Modal Close =====
+document.getElementById('recordModal').addEventListener('click',function(e){if(e.target===this)closeRecordModal();});
+document.getElementById('apiKeyModal').addEventListener('click',function(e){if(e.target===this)closeApiKeyModal();});
+document.getElementById('detailOverlay').addEventListener('click',function(e){if(e.target===this)closeDetail();});
+document.body.addEventListener('touchmove',function(e){if(e.target.closest('.page')||e.target.closest('.chat-messages')||e.target.closest('.detail-inner'))return;e.preventDefault();},{passive:false});
+
+document.addEventListener('DOMContentLoaded',()=>{renderWaterfall();updateApiKeyUI();document.getElementById('recordTime').value=new Date().toISOString().slice(0,16);});
+</script>
+</body>
+</html>

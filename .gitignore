@@ -1,0 +1,10 @@
+node_modules/
+*.log
+__pycache__/
+*.pyc
+.DS_Store
+zhuayin-app.zip
+server.log
+proxy.log
+server_flask.log
+server_http.log
