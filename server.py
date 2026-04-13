@@ -175,9 +175,9 @@ def verify_key():
             "Content-Type": "application/json",
         }
         payload = {
-            "model": "qwen-vl-plus",
+            "model": "qwen-plus",
             "messages": [
-                {"role": "user", "content": [{"type": "text", "text": "hi"}]}
+                {"role": "user", "content": "hi"}
             ],
             "max_tokens": 1,
         }
@@ -185,7 +185,7 @@ def verify_key():
             f"{BAILIAN_BASE_URL}/chat/completions",
             headers=headers,
             json=payload,
-            timeout=15,
+            timeout=10,
         )
         if resp.status_code == 200:
             return jsonify({"valid": True})
